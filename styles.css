@@ -638,7 +638,7 @@ html {
     will-change: opacity, filter;
 }
 .spacer {
-    height: 30vh; /* acercar la primera imagen al header */
+    height: 0; /* reducir al mínimo la separación */
     background-color: #000;
 }
 

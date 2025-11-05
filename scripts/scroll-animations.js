@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     scrollTrigger: {
       trigger: videoSpacer,
       start: 'top top',
-      end: '+=300', // completar el desvanecimiento más rápido
+      end: 'bottom top', // que termine justo al finalizar el hero
       scrub: true,
       ease: 'power1.out',
     },
