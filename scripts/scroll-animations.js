@@ -106,9 +106,43 @@ document.addEventListener('DOMContentLoaded', () => {
       stagger: 0.1,
       scrollTrigger: {
         trigger: container,
-        start: 'top 60%', // empieza un poco más tarde
-        end: 'top 40%',   // completa después de avanzar más
+        start: 'top 80%', // aparece antes al entrar el bloque
+        end: 'top 60%',   // completa pronto para reducir espera
         toggleActions: 'play none none reverse'
+      }
+    });
+  });
+
+  // Separadores: fade-in con blur antes de cada imagen
+  const separators = document.querySelectorAll('.separator');
+  separators.forEach((sep) => {
+    gsap.to(sep, {
+      opacity: 1,
+      filter: 'blur(0px)',
+      duration: 0.6,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: sep,
+        start: 'top 85%',
+        end: 'top 75%',
+        toggleActions: 'play none none reverse'
+      }
+    });
+  });
+
+  // Desplazamiento del enfoque dentro del marco al hacer scroll
+  const frameImages = document.querySelectorAll('.image-container .focus-frame img');
+  frameImages.forEach((img) => {
+    const container = img.closest('.image-container');
+    if (!container) return;
+    gsap.fromTo(img, { yPercent: -35 }, {
+      yPercent: 35,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: container,
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: true
       }
     });
   });
