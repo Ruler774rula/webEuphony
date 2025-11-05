@@ -92,4 +92,24 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // Fade-in difuminado solo del texto (h2 y p) entre imágenes al hacer scroll
+  const textBlocks = document.querySelectorAll('.text-content');
+  textBlocks.forEach((container) => {
+    const items = container.querySelectorAll('h2, p');
+    gsap.to(items, {
+      opacity: 1,
+      y: 0,
+      filter: 'blur(0px)',
+      duration: 0.8,
+      ease: 'power2.out',
+      stagger: 0.1,
+      scrollTrigger: {
+        trigger: container,
+        start: 'top 60%', // empieza un poco más tarde
+        end: 'top 40%',   // completa después de avanzar más
+        toggleActions: 'play none none reverse'
+      }
+    });
+  });
 });

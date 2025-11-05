@@ -555,21 +555,16 @@ html {
 }
 
 .image-container {
-    height: 100vh;
     width: 100%;
-    position: sticky;
-    top: 0;
-    overflow: hidden;
+    position: relative;
+    height: auto;
+    overflow: visible;
 }
 
 .image-container img {
     width: 100%;
-    height: 120%; /* La imagen es más alta que el contenedor */
-    object-fit: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
-    /* La animación se controlará con GSAP */
+    height: auto;
+    display: block;
 }
 
 .text-content {
@@ -583,6 +578,15 @@ html {
     background-color: #000;
     position: relative;
     z-index: 1;
+}
+
+/* Solo el texto se anima (no el fondo) */
+.text-content h2,
+.text-content p {
+    opacity: 0; /* estado inicial: oculto */
+    transform: translateY(20px); /* pequeño desplazamiento hacia abajo */
+    filter: blur(6px); /* difuminado inicial */
+    will-change: opacity, transform, filter; /* mejor rendimiento en animación */
 }
 
 .text-content.visible {
