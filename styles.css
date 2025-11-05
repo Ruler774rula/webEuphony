@@ -1,0 +1,530 @@
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.5); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Fuentes personalizadas */
+@font-face {
+  font-family: 'Foglihtenno';
+  src: url('./public/Foglihtenno07-e9wz3.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'MILONER';
+  src: url('./public/MILONER-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'PlayfairDisplay';
+  src: url('./public/PlayfairDisplayBlack-RpvVA.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Runtime';
+  src: url('./public/RuntimeRegular-m2Odx.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Variables CSS */
+:root {
+  --primary-color: #d4af37;
+  --secondary-color: #000000;
+  --accent-color: #f5f5f5;
+  --text-light: #ffffff;
+  --text-dark: #333333;
+  --button-color: #333333; /* Cambiado el color de la burbuja de contacto */
+}
+
+/* Reset y base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Runtime', 'Arial', sans-serif;
+  line-height: 1.6;
+  color: var(--text-dark);
+  overflow-x: hidden;
+  background: var(--secondary-color);
+}
+
+/* Header y efectos de iluminación */
+.header {
+  position: relative;
+  height: 100vh;
+  background: #000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.navbar {
+  position: fixed; /* Cambiado a fixed para que se quede en el top al scroll */
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 2rem;
+  z-index: 10;
+  transition: background 0.3s ease;
+}
+
+.navbar.scrolled {
+  background: rgba(26, 26, 26, 0.9); /* Fondo semi-transparente al scroll */
+  padding: 1rem;
+}
+
+.logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1001;
+  clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%); /* Inicialmente oculto para la animación */
+}
+
+.logo-img {
+  height: 150px; /* Logo grande inicialmente */
+  width: auto;
+  transition: all 0.3s ease;
+}
+
+.navbar.scrolled .logo-img {
+  height: 80px; /* Altura más pequeña al hacer scroll */
+}
+
+.logo-container {
+  position: relative;
+}
+
+.logo img {
+  display: block;
+  height: 100%;
+}
+
+.hero-content {
+  text-align: center;
+  z-index: 5;
+  color: var(--text-light);
+  animation: fadeInUp 1.5s ease-out;
+}
+
+@media (max-width: 768px) {
+  .logo-img {
+    height: 120px;
+  }
+  .navbar.scrolled .logo-img {
+    height: 50px;
+  }
+}
+
+/* Secciones principales */
+.main-content {
+  position: relative;
+}
+
+.section {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.section-bg {
+  position: absolute;
+  top: -20%;
+  left: 0;
+  width: 100%;
+  height: 120%;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  z-index: 1;
+  transition: transform 0.5s ease; /* Mantenemos transition pero eliminamos hover scale */
+}
+
+.section-bg::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(0, 0, 0, 0.3) 50%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+}
+
+/* Eliminado el hover effect */
+/* .section:hover .section-bg { transform: scale(1.02); } */
+
+.content-overlay {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  color: var(--text-light);
+  padding: 2rem;
+  opacity: 0;
+  transform: translateY(50px);
+  animation: fadeInUp 1s ease-out forwards;
+}
+
+.content-overlay h2 {
+  font-family: 'PlayfairDisplay', serif;
+  font-size: 3.5rem; /* Aumentado para más impacto */
+  font-weight: 900;
+  margin-bottom: 1.5rem;
+  color: var(--text-light);
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+  letter-spacing: 3px; /* Mejor spacing */
+  text-transform: uppercase;
+}
+
+.content-overlay p {
+  font-family: 'MILONER', sans-serif;
+  font-size: 1.5rem; /* Aumentado para mejor legibilidad */
+  color: var(--text-light);
+  opacity: 0.95;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+  max-width: 700px; /* Más ancho para mejor flow */
+  margin: 0 auto;
+  font-weight: 500;
+  letter-spacing: 1px; /* Mejor spacing */
+  line-height: 2; /* Mejor line-height para lujo */
+}
+
+@media (max-width: 768px) {
+  .content-overlay h2 {
+    font-size: 2.5rem;
+  }
+  .content-overlay p {
+    font-size: 1.2rem;
+  }
+}
+
+/* Footer */
+.footer {
+  background: var(--secondary-color);
+  color: var(--text-light);
+  padding: 4rem 2rem;
+  text-align: center;
+  position: relative;
+}
+
+.footer-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.footer-content h3 {
+  font-size: 2.5rem;
+  font-weight: 300;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+.footer-content p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+}
+
+.footer-contact-btn {
+  background: var(--button-color);
+  color: var(--text-light);
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 0; /* Cuadrado */
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.footer-contact-btn:hover {
+  background: #222222;
+  transform: translateY(-2px);
+}
+
+.footer-form-container {
+  max-width: 600px;
+  margin: 2rem auto 0;
+  display: none; /* Oculto inicialmente */
+}
+
+.footer-form-container.active {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .footer-content h3 {
+    font-size: 2rem;
+  }
+}
+
+/* Botón de contacto flotante */
+.contact-toggle {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 150px;
+  height: 50px;
+  background: var(--button-color); /* Color cambiado */
+  border: none;
+  border-radius: 0; /* Cuadrado */
+  cursor: pointer;
+  z-index: 1001;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.2rem;
+  font-family: 'MILONER', sans-serif;
+  font-weight: 500;
+}
+
+.contact-toggle:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 60px rgba(0, 0, 0, 0.5);
+  background: #222222;
+}
+
+.contact-toggle.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(100px);
+}
+
+/* Formulario de contacto (ahora solo en footer) */
+.contact-form {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  padding: 1.5rem;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 1.5rem;
+}
+
+.form-header h3 {
+  font-family: 'PlayfairDisplay', serif;
+  color: var(--primary-color);
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+  color: var(--text-dark);
+}
+
+form {
+  padding: 0;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-dark);
+  font-weight: 500;
+  font-family: 'MILONER', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  transition: border-color 0.3s ease;
+  background: white;
+  font-family: 'Runtime', sans-serif;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+  transform: translateY(-2px);
+}
+
+.submit-btn {
+  width: 100%;
+  background: var(--primary-color);
+  color: var(--text-light);
+  border: none;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+  background: #b8941f;
+  transform: translateY(-1px);
+}
+
+.thank-you-message {
+  padding: 2rem 1.5rem;
+  text-align: center;
+  display: none;
+}
+
+.thank-you-message h3 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.thank-you-message p {
+  color: var(--text-dark);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Ocultar barra de scroll */
+::-webkit-scrollbar {
+  display: none;
+}
+
+html {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@media (max-width: 480px) {
+  .contact-toggle {
+    width: 120px;
+    height: 40px;
+    font-size: 1rem;
+  }
+}
+
+/* Loader SVG */
+#loader {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+#loader .svg-container {
+  width: 40vw;
+  max-width: 500px;
+  min-width: 280px;
+  position: relative;
+}
+#logoStroke {
+  width: 100%;
+  height: auto;
+}
+#logoStroke path {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+#logoColor {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: blur(4px);
+  opacity: 0;
+  transform: translateY(-3px);
+}
+
+/* Video de fondo en header */
+#video-container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2; /* Detrás del logo (1001) y navbar (10) */
+  display: none; /* Se mostrará tras la animación del logo */
+  pointer-events: none; /* No bloquear interacciones */
+}
+
+#bg-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(4px) saturate(0.9) contrast(1.05);
+  opacity: 0.45; /* Menos opacidad */
+  transform: scale(1.03); /* Sutil zoom para atmósfera */
+}
+
+#video-container .noise {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  opacity: 0.08;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0 1px, rgba(0,0,0,0.03) 1px 2px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0 1px, rgba(0,0,0,0.03) 1px 2px);
+  animation: noiseShift 1.5s steps(2) infinite;
+}
+
+@keyframes noiseShift {
+  0% { transform: translate3d(0,0,0); }
+  100% { transform: translate3d(-2%, 2%, 0); }
+}
