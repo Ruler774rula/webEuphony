@@ -18,12 +18,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   tl.to('#logoStroke path', { strokeDashoffset: 0, duration: 1.5, stagger: 0 })
     .to('#logoColor', { opacity: 1, duration: 0.8 }, "-=0.5") // Solapar para una transición más suave
-    // Inicia la animación del segundo logo y el desvanecimiento del primero simultáneamente
-    .to('.logo', { 
-        clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)', 
-        duration: 1.5, 
-        ease: 'power2.inOut' 
-    }, "+=0.2") // Iniciar poco después de que el color aparezca
+    // Revela el logo desde el lado (izquierdo) con máscara sobredimensionada para evitar bordes visibles
+    .fromTo(
+      '.logo',
+      {
+        clipPath: 'polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)'
+      },
+      {
+        clipPath: 'polygon(-20% 0%, 120% 0%, 120% 100%, -20% 100%)',
+        duration: 1.5,
+        ease: 'power2.inOut'
+      },
+      "+=0.2"
+    ) // Iniciar poco después de que el color aparezca
     .to('.loader', { 
         opacity: 0, 
         duration: 1, 
@@ -39,6 +46,28 @@ document.addEventListener('DOMContentLoaded', () => {
     .to('#bg-video', { scale: 1.02, duration: 6, ease: 'power1.inOut' }, "<")
     // Mostrar el prompt de "Descubrir más" bajo el logo
     .fromTo('#discoverPrompt', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, "<");
+
+  // Ocultar el prompt "Descubrir más" en cuanto se inicia el primer scroll; reaparece solo al volver al top
+  const discoverPrompt = document.getElementById('discoverPrompt');
+  if (discoverPrompt) {
+    // Si la página no está en el tope al cargar, mantener oculto
+    if (window.scrollY > 0) {
+      gsap.set(discoverPrompt, { autoAlpha: 0 });
+    }
+
+    let hidden = window.scrollY > 0;
+    const onScroll = () => {
+      const atTop = window.scrollY <= 0;
+      if (!atTop && !hidden) {
+        hidden = true;
+        gsap.to(discoverPrompt, { autoAlpha: 0, duration: 0.3, ease: 'power2.out' });
+      } else if (atTop && hidden) {
+        hidden = false;
+        gsap.to(discoverPrompt, { autoAlpha: 1, duration: 0.3, ease: 'power2.out' });
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
 
   // Animate the video to fade to black on scroll
   gsap.to(video, {

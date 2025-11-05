@@ -32,6 +32,20 @@
   font-style: normal;
 }
 
+/* Nueva fuente: NEXT ART Heavy */
+@font-face {
+  font-family: 'NEXTART';
+  src: url('./public/NEXT ART_Heavy.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'NEXTART';
+  src: url('./public/NEXT ART_Heavy.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+}
+
 /* Variables CSS */
 :root {
   --primary-color: #d4af37;
@@ -54,7 +68,7 @@ html {
 }
 
 body {
-  font-family: 'Runtime', 'Arial', sans-serif;
+  font-family: 'NEXTART', 'Arial', sans-serif;
   line-height: 1.6;
   color: var(--text-dark);
   overflow-x: hidden;
@@ -73,6 +87,7 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1001;
+  will-change: clip-path, transform; /* mejora rendimiento en la animación de máscara */
 }
 
 #video-container {
@@ -104,7 +119,7 @@ body {
   align-items: center;
   gap: 6px;
   color: var(--text-light);
-  font-family: 'MILONER', sans-serif;
+  font-family: 'NEXTART', sans-serif;
   font-size: 1rem;
   letter-spacing: 1px;
   opacity: 0; /* aparece con GSAP */
@@ -208,7 +223,7 @@ body {
 }
 
 .content-overlay h2 {
-  font-family: 'PlayfairDisplay', serif;
+  font-family: 'NEXTART', sans-serif;
   font-size: 3.5rem; /* Aumentado para más impacto */
   font-weight: 900;
   margin-bottom: 1.5rem;
@@ -219,7 +234,7 @@ body {
 }
 
 .content-overlay p {
-  font-family: 'MILONER', sans-serif;
+  font-family: 'NEXTART', sans-serif;
   font-size: 1.5rem; /* Aumentado para mejor legibilidad */
   color: var(--text-light);
   opacity: 0.95;
@@ -304,13 +319,15 @@ body {
 /* Botón de contacto flotante */
 .contact-toggle {
   position: fixed;
-  bottom: 30px;
-  right: 30px;
+  top: 24px;
+  right: 80px; /* desplazado más a la izquierda desde el borde derecho */
+  bottom: auto;
+  left: auto;
   width: 150px;
   height: 50px;
-  background: var(--button-color); /* Color cambiado */
-  border: none;
-  border-radius: 0; /* Cuadrado */
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.8); /* contorno blanco fino */
+  border-radius: 25px;
   cursor: pointer;
   z-index: 1001;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
@@ -320,14 +337,14 @@ body {
   justify-content: center;
   color: white;
   font-size: 1.2rem;
-  font-family: 'MILONER', sans-serif;
+  font-family: 'NEXTART', sans-serif;
   font-weight: 500;
 }
 
 .contact-toggle:hover {
   transform: scale(1.05);
   box-shadow: 0 15px 60px rgba(0, 0, 0, 0.5);
-  background: #222222;
+  background: rgba(0, 0, 0, 0.3);
 }
 
 .contact-toggle.hidden {
@@ -353,7 +370,7 @@ body {
 }
 
 .form-header h3 {
-  font-family: 'PlayfairDisplay', serif;
+  font-family: 'NEXTART', sans-serif;
   color: var(--primary-color);
   font-size: 2rem;
   font-weight: 900;
@@ -387,7 +404,7 @@ form {
   margin-bottom: 0.5rem;
   color: var(--text-dark);
   font-weight: 500;
-  font-family: 'MILONER', sans-serif;
+  font-family: 'NEXTART', sans-serif;
   font-size: 1.1rem;
   letter-spacing: 0.5px;
 }
@@ -401,7 +418,7 @@ form {
   font-size: 1.1rem;
   transition: border-color 0.3s ease;
   background: white;
-  font-family: 'Runtime', sans-serif;
+  font-family: 'NEXTART', sans-serif;
 }
 
 .form-group input:focus,
