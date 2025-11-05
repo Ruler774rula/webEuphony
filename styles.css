@@ -51,6 +51,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
 }
 
 body {
@@ -71,6 +72,7 @@ body {
   align-items: center;
   flex-direction: column;
   overflow: hidden;
+  scroll-snap-align: start;
 }
 
 .navbar {
@@ -94,6 +96,37 @@ body {
   transform: translateX(-50%);
   z-index: 1001;
   clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%); /* Inicialmente oculto para la animación */
+}
+
+.discover-prompt {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 36px; /* en la parte baja de la pantalla */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-light);
+  font-family: 'MILONER', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  opacity: 0; /* aparece con GSAP */
+  pointer-events: auto;
+  z-index: 1002; /* sobre el video y la navbar */
+  cursor: pointer;
+}
+.discover-prompt .arrow {
+  font-size: 1.2rem;
+  animation: bounceArrow 1.4s ease-in-out infinite;
+}
+@keyframes bounceArrow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+.discover-prompt.hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .logo-img {
@@ -143,6 +176,7 @@ body {
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  scroll-snap-align: start;
 }
 
 .section-bg {
@@ -183,8 +217,8 @@ body {
   color: var(--text-light);
   padding: 2rem;
   opacity: 0;
-  transform: translateY(50px);
-  animation: fadeInUp 1s ease-out forwards;
+  transform: translateY(30px);
+  filter: blur(6px);
 }
 
 .content-overlay h2 {

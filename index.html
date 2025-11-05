@@ -47,6 +47,11 @@
           </div>
       </div>
     </nav>
+    <!-- Prompt fijo en la parte baja de la pantalla -->
+    <div id="discoverPrompt" class="discover-prompt" aria-label="Descubrir más">
+      <span class="prompt-text">Descubrir más</span>
+      <span class="arrow" aria-hidden="true">▼</span>
+    </div>
     
     <!-- Eliminado hero-title y subtitle para enfocarse en logo grande -->
   </header>
@@ -151,6 +156,7 @@
   <script>
     // Animación de loader SVG (trazo en 1s)
     window.addEventListener('DOMContentLoaded', () => {
+      gsap.registerPlugin(ScrollTrigger);
       const loader = document.getElementById('loader');
       const paths = document.querySelectorAll('#logoStroke path');
       paths.forEach(p => {
@@ -181,7 +187,88 @@
         // Mostrar y desvanecer el video de fondo tras el loader
         .set('#video-container', { display: 'block' })
         .fromTo('#video-container', { opacity: 0 }, { opacity: 1, duration: 1.2, ease: 'power2.out' })
-        .to('#bg-video', { scale: 1.02, duration: 6, ease: 'power1.inOut' }, "<");
+        .to('#bg-video', { scale: 1.02, duration: 6, ease: 'power1.inOut' }, "<")
+        // Mostrar el prompt de "Descubrir más" bajo el logo
+        .fromTo('#discoverPrompt', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, "<");
+
+      const discoverPrompt = document.getElementById('discoverPrompt');
+      let promptDismissed = false;
+
+      const dismissPrompt = () => {
+        if (!promptDismissed) {
+          promptDismissed = true;
+          if (discoverPrompt) {
+            gsap.to(discoverPrompt, { opacity: 0, duration: 0.3, onComplete: () => discoverPrompt.classList.add('hidden') });
+          }
+        }
+      };
+
+      const goToFirstSection = () => {
+        const firstSection = document.querySelector('.section-1');
+        if (firstSection) {
+          firstSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      };
+
+      if (discoverPrompt) {
+        discoverPrompt.addEventListener('click', () => {
+          dismissPrompt();
+          goToFirstSection();
+        }, { once: true });
+      }
+
+      // Mostrar el prompt mientras el header esté visible (si no ha sido descartado por clic)
+      const headerEl = document.querySelector('.header');
+      if (headerEl && discoverPrompt) {
+        const headerObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (promptDismissed) return;
+            if (entry.isIntersecting) {
+              discoverPrompt.classList.remove('hidden');
+              discoverPrompt.style.opacity = '1';
+            } else {
+              discoverPrompt.classList.add('hidden');
+              discoverPrompt.style.opacity = '0';
+            }
+          });
+        }, { threshold: 0.6 }); // Evita parpadeos con scroll-snap al requerir 60% visible
+        headerObserver.observe(headerEl);
+      }
+
+      // Animaciones por sección: fondo entra y textos se difuminan apareciendo
+      document.querySelectorAll('.section').forEach((section) => {
+        const bg = section.querySelector('.section-bg');
+        const overlay = section.querySelector('.content-overlay');
+
+        if (bg) {
+          gsap.fromTo(bg, { y: 60, scale: 1.08 }, {
+            y: 0,
+            scale: 1,
+            duration: 0.8,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: section,
+              start: 'top center',
+              toggleActions: 'play none none reverse'
+            }
+          });
+        }
+
+        if (overlay) {
+          gsap.fromTo(overlay, { opacity: 0, y: 30, filter: 'blur(8px)' }, {
+            opacity: 1,
+            y: 0,
+            filter: 'blur(0px)',
+            duration: 0.8,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: section,
+              start: 'top center',
+              toggleActions: 'play none none reverse'
+            }
+          });
+        }
+      });
     });
 
     // Manejar navbar scrolled
