@@ -196,8 +196,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const footerContactBtn = document.getElementById('footerContactBtn');
   const footerFormContainer = document.getElementById('footerFormContainer');
+  const contactToggle = document.getElementById('contactToggle');
 
-  footerContactBtn.addEventListener('click', () => {
+  // Función para abrir el formulario del footer y desplazar hasta él
+  function openFooter() {
     footerFormContainer.classList.add('active');
     gsap.fromTo(
       footerFormContainer,
@@ -207,13 +209,26 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
       footerFormContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 400);
-  });
+
+    // Ocultar el botón flotante mientras el formulario está activo
+    if (contactToggle) {
+      contactToggle.classList.add('hidden');
+      contactToggle.style.opacity = '0';
+    }
+  }
+
+  footerContactBtn.addEventListener('click', openFooter);
 
   // Función para cerrar el formulario del footer
   function closeFooter() {
     gsap.to(footerFormContainer, { opacity: 0, y: 100, duration: 0.5, ease: 'power2.in', onComplete: () => {
       footerFormContainer.classList.remove('active');
       document.body.style.overflow = '';
+      // Restaurar visibilidad del botón flotante según posición de scroll
+      if (contactToggle) {
+        contactToggle.classList.remove('hidden');
+        updateContactToggleVisibility();
+      }
     }});
   }
 
@@ -228,5 +243,48 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     },
   });
+
+  // Lógica de difuminado del botón flotante "Contacta" al acercarse al fondo
+  const FADE_DISTANCE = 400; // px antes del fondo donde empieza a difuminar
+
+  function updateContactToggleVisibility() {
+    if (!contactToggle) return;
+
+    // Si el formulario está activo, el botón no debe mostrarse
+    if (footerFormContainer.classList.contains('active')) {
+      contactToggle.classList.add('hidden');
+      contactToggle.style.opacity = '0';
+      return;
+    }
+
+    const doc = document.documentElement;
+    const distanceToBottom = doc.scrollHeight - doc.scrollTop - window.innerHeight;
+
+    if (distanceToBottom <= 0) {
+      // En el fondo: oculto por completo
+      contactToggle.classList.add('hidden');
+      contactToggle.style.opacity = '0';
+    } else if (distanceToBottom < FADE_DISTANCE) {
+      // Difuminado progresivo antes de llegar al fondo
+      const opacity = Math.max(0, Math.min(1, distanceToBottom / FADE_DISTANCE));
+      contactToggle.classList.remove('hidden');
+      contactToggle.style.opacity = String(opacity);
+    } else {
+      // Lejos del fondo: visible pleno
+      contactToggle.classList.remove('hidden');
+      contactToggle.style.opacity = '1';
+    }
+  }
+
+  // Vincular el botón flotante para desplazar hacia el footer
+  if (contactToggle) {
+    contactToggle.addEventListener('click', openFooter);
+  }
+
+  // Actualizar en scroll y resize
+  window.addEventListener('scroll', updateContactToggleVisibility, { passive: true });
+  window.addEventListener('resize', updateContactToggleVisibility);
+  // Inicial
+  updateContactToggleVisibility();
 
 });
