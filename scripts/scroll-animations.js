@@ -77,6 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
       start: 'top top',
       end: 'bottom top', // que termine justo al finalizar el hero
       scrub: true,
+      pin: true,
       ease: 'power1.out',
     },
   });
