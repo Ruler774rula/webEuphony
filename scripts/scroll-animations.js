@@ -176,4 +176,57 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  // Desplazamiento del enfoque dentro del marco al hacer scroll
+  // frameImages already declared above; reuse existing NodeList
+  frameImages.forEach((img) => {
+    const container = img.closest('.image-container');
+    if (!container) return;
+    gsap.fromTo(img, { yPercent: -35 }, {
+      yPercent: 35,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: container,
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: true
+      }
+    });
+  });
+
+  const footerContactBtn = document.getElementById('footerContactBtn');
+  const footerFormContainer = document.getElementById('footerFormContainer');
+
+  footerContactBtn.addEventListener('click', () => {
+    footerFormContainer.classList.add('active');
+    gsap.fromTo(
+      footerFormContainer,
+      { opacity: 0, y: 100 },
+      { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }
+    );
+    setTimeout(() => {
+      footerFormContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 400);
+  });
+
+  // Función para cerrar el formulario del footer
+  function closeFooter() {
+    gsap.to(footerFormContainer, { opacity: 0, y: 100, duration: 0.5, ease: 'power2.in', onComplete: () => {
+      footerFormContainer.classList.remove('active');
+      document.body.style.overflow = '';
+    }});
+  }
+
+  // ScrollTrigger para cerrar el formulario al hacer scroll hacia arriba
+  ScrollTrigger.create({
+    trigger: footerFormContainer,
+    start: 'top bottom',
+    end: 'bottom top',
+    onLeaveBack: () => {
+      if (footerFormContainer.classList.contains('active')) {
+        closeFooter();
+      }
+    },
+  });
+
 });

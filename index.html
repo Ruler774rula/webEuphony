@@ -111,7 +111,6 @@
       <div class="contact-form">
         <div class="form-header">
           <h3>Contacta con nosotros</h3>
-          <button class="close-btn" id="closeFooterForm">&times;</button>
         </div>
         
         <form id="contactFormElement">
@@ -132,15 +131,7 @@
           
           <div class="form-group">
             <label for="servicio">Servicio de interés</label>
-            <select id="servicio" name="servicio" required>
-              <option value="">Selecciona un servicio</option>
-              <option value="boda-completa">Boda Completa</option>
-              <option value="planificacion">Planificación</option>
-              <option value="decoracion">Decoración</option>
-              <option value="catering">Catering</option>
-              <option value="fotografia">Fotografía</option>
-              <option value="otro">Otro</option>
-            </select>
+            <textarea id="servicio" name="servicio" rows="4" placeholder="Describe el servicio de interés" required></textarea>
           </div>
           
           <button type="submit" class="submit-btn">Enviar</button>
