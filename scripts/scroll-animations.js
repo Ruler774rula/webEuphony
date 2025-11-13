@@ -67,6 +67,14 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
     window.addEventListener('scroll', onScroll, { passive: true });
+
+    discoverPrompt.addEventListener('click', () => {
+      const target = document.querySelector('.text-content');
+      if (!target) return;
+      const absoluteTop = target.getBoundingClientRect().top + window.pageYOffset;
+      const y = Math.max(0, absoluteTop - window.innerHeight * 0.80);
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    });
   }
 
   // Animate the video to fade to black on scroll
@@ -75,53 +83,58 @@ document.addEventListener('DOMContentLoaded', () => {
     scrollTrigger: {
       trigger: videoSpacer,
       start: 'top top',
-      end: 'bottom top', // que termine justo al finalizar el hero
+      end: '+=200',
       scrub: true,
       pin: true,
       ease: 'power1.out',
     },
   });
 
-  // Animate the logo on scroll
   gsap.to(logo, {
-    top: '10%', // Fijar más abajo del borde superior
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    scale: 0.33, // Más pequeño al finalizar
+    autoAlpha: 0,
     scrollTrigger: {
       trigger: videoSpacer,
       start: 'top top',
-      end: '+=300', // encoger en pocos scrolls
-      scrub: true,
-      ease: 'power2.out',
-    },
+      end: '+=200',
+      scrub: true
+    }
   });
 
-  // Ocultar el logo cuando entra el contenido principal; mostrar al subir
   const mainContent = document.querySelector('.main-content');
   if (mainContent) {
+    gsap.set(mainContent, { autoAlpha: 0 });
     ScrollTrigger.create({
-      trigger: mainContent,
+      trigger: videoSpacer,
       start: 'top top',
-      onEnter: () => gsap.to(logo, { autoAlpha: 0, duration: 0.2 }),
-      onLeaveBack: () => gsap.to(logo, { autoAlpha: 1, duration: 0.2 })
+      end: '+=200',
+      onLeave: () => gsap.to(mainContent, { autoAlpha: 1, duration: 0.2 }),
+      onEnterBack: () => gsap.set(mainContent, { autoAlpha: 0 })
     });
   }
 
-  // Difuminar y desaparecer el logo justo antes de la primera foto
-  const firstImageContainer = document.querySelector('.image-container');
-  if (firstImageContainer) {
-    gsap.to(logo, {
-      autoAlpha: 0,
-      scrollTrigger: {
-        trigger: firstImageContainer,
-        start: 'top 85%', // empieza a desvanecer antes de que la imagen entre
-        end: 'top 65%', // termina de desaparecer antes de verla completa
-        scrub: true,
-        ease: 'power1.out'
-      }
-    });
+  const logoLink = document.querySelector('.logo-link');
+  const logoRoot = document.querySelector('.logo');
+  if (logoLink && logoRoot) {
+    const onMove = (e) => {
+      const rect = logoLink.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      logoRoot.style.setProperty('--mx', x + 'px');
+      logoRoot.style.setProperty('--my', y + 'px');
+    };
+    const onEnter = () => {
+      logoRoot.style.setProperty('--r', '100px');
+    };
+    const onLeave = () => {
+      logoRoot.style.setProperty('--r', '0px');
+    };
+    logoLink.addEventListener('mousemove', onMove);
+    logoLink.addEventListener('mouseenter', onEnter);
+    logoLink.addEventListener('mouseleave', onLeave);
   }
+
+  
+
 
   // Fade-in difuminado solo del texto (h2 y p) entre imágenes al hacer scroll
   const textBlocks = document.querySelectorAll('.text-content');
@@ -214,8 +227,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (contactToggle) {
       contactToggle.classList.add('hidden');
       contactToggle.style.opacity = '0';
-    }
   }
+
+}
 
   footerContactBtn.addEventListener('click', openFooter);
 

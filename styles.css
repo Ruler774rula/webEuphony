@@ -78,7 +78,7 @@ body {
 
 
 .video-spacer {
-  height: 100vh;
+  height: 70vh;
 }
 
 .logo {
@@ -141,9 +141,30 @@ body {
 }
 
 .logo-img {
-  height: 150px; /* Logo grande inicialmente */
-  width: auto;
+  width: clamp(240px, 60vw, 1400px);
+  max-width: 92vw;
+  height: auto;
+  max-height: 60vh;
   transition: all 0.3s ease;
+}
+
+.logo-link {
+  position: relative;
+  display: inline-block;
+}
+
+.logo-white {
+  position: relative;
+  z-index: 1;
+}
+
+.logo-color {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  clip-path: circle(var(--r, 0px) at var(--mx, 50%) var(--my, 50%));
+  pointer-events: none;
+  transition: clip-path 0.2s ease;
 }
 
 
@@ -154,7 +175,8 @@ body {
 
 .logo img {
   display: block;
-  height: 100%;
+  height: auto;
+  width: auto;
 }
 
 .hero-content {
@@ -332,7 +354,7 @@ body {
 .contact-toggle {
   position: fixed;
   top: 24px;
-  right: 80px; /* desplazado más a la izquierda desde el borde derecho */
+  right: clamp(15px, 6vw, 80px);
   bottom: auto;
   left: auto;
   width: 150px;
@@ -668,9 +690,9 @@ html {
 
 /* Marco de enfoque (máscara) */
 .focus-frame {
-    width: calc(100vw - 64px); /* deja un marco sutil a los lados */
+    width: calc(100vw - 64px);
     max-width: none;
-    height: 68vh;
+    height: 80vh;
     overflow: hidden;
     border-radius: 16px;
     position: relative;
@@ -732,7 +754,7 @@ html {
     height: 100vh;
   }
   .focus-frame {
-    height: 42vh;
+    height: 56vh;
     border-radius: 12px;
   }
 }
