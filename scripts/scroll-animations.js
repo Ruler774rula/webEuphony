@@ -210,6 +210,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const footerContactBtn = document.getElementById('footerContactBtn');
   const footerFormContainer = document.getElementById('footerFormContainer');
   const contactToggle = document.getElementById('contactToggle');
+  const menuToggle = document.getElementById('menuToggle');
+  const sideMenu = document.getElementById('sideMenu');
+  const menuOverlay = document.getElementById('menuOverlay');
+  const menuContactLink = document.getElementById('menuContactLink');
 
   // Función para abrir el formulario del footer y desplazar hasta él
   function openFooter() {
@@ -258,33 +262,12 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   });
 
-  // Lógica de difuminado del botón flotante "Contacta" al acercarse al fondo
-  const FADE_DISTANCE = 400; // px antes del fondo donde empieza a difuminar
-
   function updateContactToggleVisibility() {
     if (!contactToggle) return;
-
-    // Si el formulario está activo, el botón no debe mostrarse
     if (footerFormContainer.classList.contains('active')) {
       contactToggle.classList.add('hidden');
       contactToggle.style.opacity = '0';
-      return;
-    }
-
-    const doc = document.documentElement;
-    const distanceToBottom = doc.scrollHeight - doc.scrollTop - window.innerHeight;
-
-    if (distanceToBottom <= 0) {
-      // En el fondo: oculto por completo
-      contactToggle.classList.add('hidden');
-      contactToggle.style.opacity = '0';
-    } else if (distanceToBottom < FADE_DISTANCE) {
-      // Difuminado progresivo antes de llegar al fondo
-      const opacity = Math.max(0, Math.min(1, distanceToBottom / FADE_DISTANCE));
-      contactToggle.classList.remove('hidden');
-      contactToggle.style.opacity = String(opacity);
     } else {
-      // Lejos del fondo: visible pleno
       contactToggle.classList.remove('hidden');
       contactToggle.style.opacity = '1';
     }
@@ -300,5 +283,43 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('resize', updateContactToggleVisibility);
   // Inicial
   updateContactToggleVisibility();
+
+  function openMenu() {
+    if (sideMenu) sideMenu.classList.add('open');
+    if (menuOverlay) menuOverlay.classList.add('open');
+  }
+
+  function closeMenu() {
+    if (sideMenu) sideMenu.classList.remove('open');
+    if (menuOverlay) menuOverlay.classList.remove('open');
+  }
+
+  if (menuToggle) {
+    menuToggle.addEventListener('click', openMenu);
+  }
+  if (menuOverlay) {
+    menuOverlay.addEventListener('click', closeMenu);
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenu();
+  });
+  if (menuContactLink) {
+    menuContactLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeMenu();
+      openFooter();
+    });
+  }
+
+  const navbar = document.querySelector('.navbar');
+  const firstImage = document.querySelector('.image-container');
+  if (navbar && firstImage) {
+    ScrollTrigger.create({
+      trigger: firstImage,
+      start: 'top top',
+      onEnter: () => navbar.classList.add('dark'),
+      onLeaveBack: () => navbar.classList.remove('dark')
+    });
+  }
 
 });

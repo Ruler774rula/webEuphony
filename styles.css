@@ -75,6 +75,39 @@ body {
   background: var(--secondary-color);
 }
 
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 46px;
+  background: transparent;
+  color: #fff;
+  z-index: 1201;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+  border-bottom: 1px solid transparent;
+}
+.navbar.dark {
+  background: #000;
+  border-bottom-color: rgba(255,255,255,0.12);
+}
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.navbar .menu-toggle,
+.navbar .contact-toggle {
+  position: static;
+  top: auto;
+  left: auto;
+  right: auto;
+}
+
 
 
 .video-spacer {
@@ -354,37 +387,33 @@ body {
 .contact-toggle {
   position: fixed;
   top: 24px;
-  right: clamp(15px, 6vw, 80px);
+  right: 46px;
   bottom: auto;
   left: auto;
-  width: 150px;
-  height: 50px;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.8); /* contorno blanco fino */
-  border-radius: 25px;
+  width: auto;
+  height: auto;
+  background: transparent;
+  border: none;
+  border-radius: 0;
   cursor: pointer;
-  z-index: 1001;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease;
+  z-index: 1201;
+  box-shadow: none;
+  transition: opacity 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-family: 'NEXTART', sans-serif;
   font-weight: 500;
+  padding: 0;
 }
 
-.contact-toggle:hover {
-  transform: scale(1.05);
-  box-shadow: 0 15px 60px rgba(0, 0, 0, 0.5);
-  background: rgba(0, 0, 0, 0.3);
-}
+.contact-toggle:hover { opacity: 0.85; transform: translateY(-2px); filter: brightness(0.85); }
 
 .contact-toggle.hidden {
   opacity: 0;
   pointer-events: none;
-  transform: translateY(100px);
 }
 
 /* Formulario de contacto (ahora solo en footer) */
@@ -753,8 +782,81 @@ html {
   .image-container {
     height: 100vh;
   }
-  .focus-frame {
+.focus-frame {
     height: 56vh;
     border-radius: 12px;
   }
+}
+
+/* Menú lateral */
+.menu-toggle {
+  position: fixed;
+  top: 24px;
+  left: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  z-index: 1201;
+  transition: opacity 0.2s ease;
+  padding: 0;
+}
+.menu-toggle:hover { opacity: 0.85; transform: translateY(-2px); filter: brightness(0.85); }
+.menu-toggle i { font-size: 1.4rem; }
+
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1200;
+  transition: opacity 0.3s ease;
+}
+.menu-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: clamp(240px, 28vw, 360px);
+  background: #000;
+
+  border-right: 1px solid rgba(255,255,255,0.2);
+  transform: translateX(-100%);
+  transition: transform 0.35s ease;
+  z-index: 1202;
+  color: #fff;
+}
+.side-menu.open { transform: translateX(0); }
+.side-menu-header {
+  padding: 18px 20px;
+  font-family: 'NEXTART', sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+.side-menu-list { list-style: none; margin: 0; padding: 10px 0; }
+.side-menu-link {
+  display: block;
+  padding: 14px 20px;
+  color: #fff;
+  text-decoration: none;
+  font-family: 'NEXTART', sans-serif;
+  font-size: 1.05rem;
+  letter-spacing: 0.5px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.side-menu-link:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+@media (max-width: 480px) {
+  .menu-toggle i { font-size: 1.3rem; }
+  .side-menu { width: 80vw; }
 }

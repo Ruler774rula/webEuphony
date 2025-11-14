@@ -40,6 +40,9 @@
       </div>
       <div class="video-spacer"></div>
     <nav class="navbar">
+      <div class="navbar-actions">
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú"><i class="fas fa-bars"></i></button>
+      </div>
       <div class="logo-container">
         <div class="logo">
             <a href="#" class="logo-link">
@@ -48,7 +51,19 @@
             </a>
           </div>
       </div>
+      <div class="navbar-actions">
+        <button class="contact-toggle" id="contactToggle">Contacta</button>
+      </div>
     </nav>
+    <div class="menu-overlay" id="menuOverlay"></div>
+    <aside class="side-menu" id="sideMenu" aria-label="Menú lateral">
+      <div class="side-menu-header">Menú</div>
+      <ul class="side-menu-list">
+        <li><a href="#" class="side-menu-link">Sobre Nosotros</a></li>
+        <li><a href="#" class="side-menu-link">Galería</a></li>
+        <li><a href="#" class="side-menu-link" id="menuContactLink">Contacta</a></li>
+      </ul>
+    </aside>
     <!-- Prompt fijo en la parte baja de la pantalla -->
     <div id="discoverPrompt" class="discover-prompt" aria-label="Descubrir más">
       <span class="prompt-text">Descubrir más</span>
@@ -65,7 +80,7 @@
     <div class="scroll-container">
         <div class="image-container">
             <div class="focus-frame">
-              <img src="./public/bouquet-bride-bride-and-groom-752842.jpg" alt="Imagen 1">
+              <img src="./imagenes/Nuevos/pexels-bertellifotografia-29486087.jpg" alt="Imagen 1">
             </div>
         </div>
         <div class="text-content">
@@ -75,7 +90,7 @@
         <div class="separator"></div>
         <div class="image-container">
             <div class="focus-frame">
-              <img src="./public/Is-Streaming-Music-Killing-the-Wedding-DJ.webp" alt="Imagen 2">
+              <img src="./imagenes/Nuevos/pexels-lilen-diaz-1025474869-22678088.jpg" alt="Imagen 2">
             </div>
         </div>
         <div class="text-content">
@@ -85,7 +100,7 @@
         <div class="separator"></div>
         <div class="image-container">
             <div class="focus-frame">
-              <img src="./public/fba3e3c3785efff020fa42004210af64.jpeg" alt="Imagen 3">
+              <img src="./imagenes/Nuevos/pexels-vidalbalielojrfotografia-14646741.jpg" alt="Imagen 3">
             </div>
         </div>
         <div class="text-content">
@@ -95,7 +110,7 @@
         <div class="separator"></div>
         <div class="image-container">
             <div class="focus-frame">
-              <img src="./public/RECIRC4-0de601149cf7459faf7dd4347f18aec7.jpeg" alt="Imagen 4">
+              <img src="./imagenes/Nuevos/pexels-ian-panelo-9174642.jpg" alt="Imagen 4">
             </div>
         </div>
     </div>
@@ -146,8 +161,7 @@
     </div>
   </footer>
 
-  <!-- Botón de contacto flotante (redirige al footer) -->
-  <button class="contact-toggle" id="contactToggle">Contacta</button>
+  
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.0/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.0/ScrollTrigger.min.js"></script>
