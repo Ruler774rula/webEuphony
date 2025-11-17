@@ -691,6 +691,15 @@ html {
   transform: scale(1.03); /* Sutil zoom para atmósfera */
 }
 
+.page-fade-overlay {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1200;
+}
+
 #video-container .noise {
   position: absolute;
   inset: 0;

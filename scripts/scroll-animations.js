@@ -230,8 +230,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function openFooter() {
     const restoreBehavior = document.documentElement.style.scrollBehavior;
     gsap.killTweensOf(footerFormContainer);
+    const pageFadeOverlay = document.getElementById('pageFadeOverlay');
     const tl = gsap.timeline();
-    tl.to(document.body, { opacity: 0, duration: 0.3, ease: 'power2.out' })
+    tl.to(pageFadeOverlay, { opacity: 1, duration: 0.3, ease: 'power2.out' })
       .to(discoverPrompt, { autoAlpha: 0, duration: 0.25, ease: 'power2.out' }, '<')
       .add(() => {
         footerFormContainer.classList.add('active');
@@ -247,7 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const y = Math.max(0, absoluteTop - navH - 8);
         window.scrollTo({ top: y, behavior: 'auto' });
       })
-      .to(document.body, { opacity: 1, duration: 0.3, ease: 'power2.out' })
+      .to(pageFadeOverlay, { opacity: 0, duration: 0.3, ease: 'power2.out' })
       .add(() => {
         document.documentElement.style.scrollBehavior = restoreBehavior || '';
         gsap.set(footerFormContainer, { visibility: 'visible', opacity: 1 });
