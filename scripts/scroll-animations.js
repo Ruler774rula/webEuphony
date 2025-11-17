@@ -214,35 +214,63 @@ document.addEventListener('DOMContentLoaded', () => {
   const sideMenu = document.getElementById('sideMenu');
   const menuOverlay = document.getElementById('menuOverlay');
   const menuContactLink = document.getElementById('menuContactLink');
+  const menuHomeLink = document.getElementById('menuHomeLink');
+  const contactForm = document.getElementById('contactFormElement');
+  const submitBtnEl = contactForm ? contactForm.querySelector('.submit-btn') : null;
+  const updateSubmitState = () => {
+    if (!contactForm || !submitBtnEl) return;
+    submitBtnEl.disabled = !contactForm.checkValidity();
+  };
+  if (contactForm) {
+    contactForm.addEventListener('input', updateSubmitState);
+    contactForm.addEventListener('change', updateSubmitState);
+    updateSubmitState();
+  }
 
-  // Función para abrir el formulario del footer y desplazar hasta él
   function openFooter() {
-    footerFormContainer.classList.add('active');
-    gsap.fromTo(
-      footerFormContainer,
-      { opacity: 0, y: 100 },
-      { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }
-    );
-    setTimeout(() => {
-      footerFormContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 400);
-
-    // Ocultar el botón flotante mientras el formulario está activo
+    const restoreBehavior = document.documentElement.style.scrollBehavior;
+    gsap.killTweensOf(footerFormContainer);
+    const tl = gsap.timeline();
+    tl.to(document.body, { opacity: 0, duration: 0.3, ease: 'power2.out' })
+      .to(discoverPrompt, { autoAlpha: 0, duration: 0.25, ease: 'power2.out' }, '<')
+      .add(() => {
+        footerFormContainer.classList.add('active');
+        gsap.set(footerFormContainer, { opacity: 0, visibility: 'hidden' });
+        const itemsPre = footerFormContainer.querySelectorAll('.contact-form .form-header, .contact-form .form-group, .contact-form .submit-btn');
+        gsap.killTweensOf(itemsPre);
+        gsap.set(itemsPre, { opacity: 0, x: -60 });
+        document.documentElement.style.scrollBehavior = 'auto';
+        const headerEl = footerFormContainer.querySelector('.contact-form .form-header') || footerFormContainer;
+        const absoluteTop = headerEl.getBoundingClientRect().top + window.pageYOffset;
+        const nav = document.querySelector('.navbar');
+        const navH = nav ? nav.offsetHeight : 0;
+        const y = Math.max(0, absoluteTop - navH - 8);
+        window.scrollTo({ top: y, behavior: 'auto' });
+      })
+      .to(document.body, { opacity: 1, duration: 0.3, ease: 'power2.out' })
+      .add(() => {
+        document.documentElement.style.scrollBehavior = restoreBehavior || '';
+        gsap.set(footerFormContainer, { visibility: 'visible', opacity: 1 });
+        if (discoverPrompt) gsap.set(discoverPrompt, { autoAlpha: 0 });
+        const items = footerFormContainer.querySelectorAll('.contact-form .form-header, .contact-form .form-group, .contact-form .submit-btn');
+        gsap.killTweensOf(items);
+        gsap.to(items, { opacity: 1, x: 0, duration: 1.1, ease: 'power3.out', stagger: 0.12 });
+        updateSubmitState();
+      });
     if (contactToggle) {
       contactToggle.classList.add('hidden');
       contactToggle.style.opacity = '0';
+    }
   }
-
-}
 
   footerContactBtn.addEventListener('click', openFooter);
 
   // Función para cerrar el formulario del footer
   function closeFooter() {
-    gsap.to(footerFormContainer, { opacity: 0, y: 100, duration: 0.5, ease: 'power2.in', onComplete: () => {
+    gsap.to(footerFormContainer, { opacity: 0, y: 100, duration: 0.4, ease: 'power2.in', onComplete: () => {
       footerFormContainer.classList.remove('active');
+      gsap.set(footerFormContainer, { clearProps: 'opacity,transform,visibility' });
       document.body.style.overflow = '';
-      // Restaurar visibilidad del botón flotante según posición de scroll
       if (contactToggle) {
         contactToggle.classList.remove('hidden');
         updateContactToggleVisibility();
@@ -300,6 +328,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (menuOverlay) {
     menuOverlay.addEventListener('click', closeMenu);
   }
+
+  const closeMenuButton = document.getElementById('closeMenuButton');
+  if (closeMenuButton) {
+    closeMenuButton.addEventListener('click', closeMenu);
+  }
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeMenu();
   });
@@ -308,6 +341,18 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       closeMenu();
       openFooter();
+    });
+  }
+
+  if (menuHomeLink) {
+    menuHomeLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeMenu();
+      const restoreBehavior = document.documentElement.style.scrollBehavior;
+      document.documentElement.style.scrollBehavior = 'auto';
+      window.scrollTo({ top: 0, behavior: 'auto' });
+      document.documentElement.style.scrollBehavior = restoreBehavior || '';
+      gsap.to(document.body, { opacity: 0, duration: 0.3, ease: 'power2.out', onComplete: () => location.reload() });
     });
   }
 
