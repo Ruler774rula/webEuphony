@@ -178,9 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Desplazamiento del enfoque dentro del marco al hacer scroll
-  const frameImages = document.querySelectorAll('.image-container .focus-frame img');
-  frameImages.forEach((img) => {
+  const directImages = document.querySelectorAll('.image-container .focus-frame > img');
+  directImages.forEach((img) => {
     const container = img.closest('.image-container');
     if (!container) return;
     gsap.fromTo(img, { yPercent: -35 }, {
@@ -195,9 +194,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Desplazamiento del enfoque dentro del marco al hacer scroll
-  // frameImages already declared above; reuse existing NodeList
-  frameImages.forEach((img) => {
+  const collageImgs = document.querySelectorAll('.focus-frame .collage-item img');
+  collageImgs.forEach((img) => {
     const container = img.closest('.image-container');
     if (!container) return;
     gsap.fromTo(img, { yPercent: -35 }, {

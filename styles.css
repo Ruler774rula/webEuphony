@@ -333,6 +333,7 @@ body {
 .footer-content {
   max-width: 800px;
   margin: 0 auto;
+  margin-top: clamp(32px, 8vh, 96px);
   text-align: center; /* Centra el botón */
 }
 
@@ -745,14 +746,34 @@ html {
 
 /* Marco de enfoque (máscara) */
 .focus-frame {
-    width: calc(100vw - clamp(48px, 6vw, 88px));
-    max-width: none;
-    height: 80vh;
-    overflow: hidden;
-    border-radius: 16px;
-    position: relative;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    isolation: isolate;
+  width: calc(100vw - clamp(48px, 6vw, 88px));
+  max-width: none;
+  height: 80vh;
+  overflow: hidden;
+  border-radius: 16px;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  isolation: isolate;
+}
+.focus-frame::before,
+.focus-frame::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: clamp(24px, 6vw, 80px);
+  pointer-events: none;
+  z-index: 3;
+}
+.focus-frame::before {
+  left: 0;
+  background: linear-gradient(to right, rgba(0,0,0,0.28), rgba(0,0,0,0));
+  filter: blur(2px);
+}
+.focus-frame::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(0,0,0,0.28), rgba(0,0,0,0));
+  filter: blur(2px);
 }
 
 .focus-frame img {
@@ -762,6 +783,69 @@ html {
     display: block;
     transform: translateY(-30%);
     will-change: transform;
+}
+
+.collage-track {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  overflow: hidden;
+}
+.collage-row {
+  position: absolute;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 2vw, 20px);
+  width: max-content;
+  animation-name: collagePan;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: reverse;
+  will-change: transform;
+}
+.row-top { top: 0; height: 58%; animation-duration: 140s; z-index: 3; }
+.row-bot { bottom: 0; height: 48%; animation-duration: 160s; }
+.collage-item {
+  flex: 0 0 auto;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  background: #000;
+  height: 100%;
+}
+.collage-item img {
+  width: 100%;
+  height: 140%;
+  object-fit: cover;
+  display: block;
+  transform: translateY(-20%);
+  will-change: transform;
+}
+.collage-item.w-s { width: clamp(140px, 12vw, 220px); }
+.collage-item.w-m { width: clamp(240px, 22vw, 380px); }
+.collage-item.w-l { width: clamp(360px, 34vw, 620px); }
+.collage-item.ratio-square { aspect-ratio: 1 / 1; }
+.collage-item.ratio-portrait { aspect-ratio: 3 / 4; }
+.collage-item.ratio-landscape { aspect-ratio: 16 / 10; }
+.collage-item.ratio-tall { aspect-ratio: 2 / 3; }
+.collage-item.ratio-wide { aspect-ratio: 21 / 9; }
+
+@keyframes collagePan {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (max-width: 1200px) {
+  .collage-row { gap: clamp(10px, 1.8vw, 16px); }
+  .collage-item.w-m { width: clamp(220px, 20vw, 320px); }
+  .collage-item.w-l { width: clamp(320px, 30vw, 520px); }
+}
+
+@media (max-width: 768px) {
+  .collage-row { gap: clamp(8px, 1.6vw, 14px); }
+  .collage-item.w-m { width: clamp(200px, 18vw, 280px); }
+  .collage-item.w-l { width: clamp(280px, 26vw, 460px); }
 }
 
 .text-content {
