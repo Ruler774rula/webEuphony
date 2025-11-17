@@ -69,10 +69,15 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', onScroll, { passive: true });
 
     discoverPrompt.addEventListener('click', () => {
-      const target = document.querySelector('.text-content');
-      if (!target) return;
-      const absoluteTop = target.getBoundingClientRect().top + window.pageYOffset;
-      const y = Math.max(0, absoluteTop - window.innerHeight * 0.80);
+      const frame = document.querySelector('.image-container .focus-frame');
+      if (!frame) return;
+      const nav = document.querySelector('.navbar');
+      const navH = nav ? nav.offsetHeight : 0;
+      const rect = frame.getBoundingClientRect();
+      const frameTopAbs = rect.top + window.pageYOffset;
+      const frameH = rect.height;
+      const vh = window.innerHeight;
+      const y = Math.max(0, frameTopAbs - ((vh - frameH) / 2) - (navH / 2));
       window.scrollTo({ top: y, behavior: 'smooth' });
     });
   }
@@ -209,6 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const footerContactBtn = document.getElementById('footerContactBtn');
   const footerFormContainer = document.getElementById('footerFormContainer');
+  const footerEl = document.getElementById('footer');
   const contactToggle = document.getElementById('contactToggle');
   const menuToggle = document.getElementById('menuToggle');
   const sideMenu = document.getElementById('sideMenu');
@@ -216,6 +222,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const menuContactLink = document.getElementById('menuContactLink');
   const menuHomeLink = document.getElementById('menuHomeLink');
   const contactForm = document.getElementById('contactFormElement');
+  const pageFadeOverlay = document.getElementById('pageFadeOverlay');
+  let overlayActive = false;
   const submitBtnEl = contactForm ? contactForm.querySelector('.submit-btn') : null;
   const updateSubmitState = () => {
     if (!contactForm || !submitBtnEl) return;
@@ -230,33 +238,43 @@ document.addEventListener('DOMContentLoaded', () => {
   function openFooter() {
     const restoreBehavior = document.documentElement.style.scrollBehavior;
     gsap.killTweensOf(footerFormContainer);
-    const pageFadeOverlay = document.getElementById('pageFadeOverlay');
     const tl = gsap.timeline();
     tl.to(pageFadeOverlay, { opacity: 1, duration: 0.3, ease: 'power2.out' })
       .to(discoverPrompt, { autoAlpha: 0, duration: 0.25, ease: 'power2.out' }, '<')
       .add(() => {
+        if (footerEl) footerEl.classList.add('modal-active');
         footerFormContainer.classList.add('active');
         gsap.set(footerFormContainer, { opacity: 0, visibility: 'hidden' });
         const itemsPre = footerFormContainer.querySelectorAll('.contact-form .form-header, .contact-form .form-group, .contact-form .submit-btn');
         gsap.killTweensOf(itemsPre);
-        gsap.set(itemsPre, { opacity: 0, x: -60 });
+        gsap.set(itemsPre, { opacity: 0, x: -60, visibility: 'hidden' });
         document.documentElement.style.scrollBehavior = 'auto';
         const headerEl = footerFormContainer.querySelector('.contact-form .form-header') || footerFormContainer;
+        const formEl = footerFormContainer.querySelector('.contact-form') || footerFormContainer;
         const absoluteTop = headerEl.getBoundingClientRect().top + window.pageYOffset;
+        const formTop = formEl.getBoundingClientRect().top + window.pageYOffset;
+        const formH = formEl.getBoundingClientRect().height;
         const nav = document.querySelector('.navbar');
         const navH = nav ? nav.offsetHeight : 0;
-        const y = Math.max(0, absoluteTop - navH - 8);
+        const vh = window.innerHeight;
+        const hasSpace = (vh - navH - 16) >= formH;
+        let y;
+        if (hasSpace) {
+          const centerOffset = ((vh - navH) - formH) / 2;
+          y = Math.max(0, formTop - navH - centerOffset);
+        } else {
+          y = Math.max(0, absoluteTop - navH - 8);
+        }
         window.scrollTo({ top: y, behavior: 'auto' });
       })
-      .to(pageFadeOverlay, { opacity: 0, duration: 0.3, ease: 'power2.out' })
       .add(() => {
         document.documentElement.style.scrollBehavior = restoreBehavior || '';
         gsap.set(footerFormContainer, { visibility: 'visible', opacity: 1 });
         if (discoverPrompt) gsap.set(discoverPrompt, { autoAlpha: 0 });
         const items = footerFormContainer.querySelectorAll('.contact-form .form-header, .contact-form .form-group, .contact-form .submit-btn');
         gsap.killTweensOf(items);
-        gsap.to(items, { opacity: 1, x: 0, duration: 1.1, ease: 'power3.out', stagger: 0.12 });
-        updateSubmitState();
+        gsap.to(items, { opacity: 1, x: 0, autoAlpha: 1, duration: 1.1, ease: 'power3.out', stagger: 0.12, onComplete: updateSubmitState });
+        overlayActive = true;
       });
     if (contactToggle) {
       contactToggle.classList.add('hidden');
@@ -271,12 +289,15 @@ document.addEventListener('DOMContentLoaded', () => {
     gsap.to(footerFormContainer, { opacity: 0, y: 100, duration: 0.4, ease: 'power2.in', onComplete: () => {
       footerFormContainer.classList.remove('active');
       gsap.set(footerFormContainer, { clearProps: 'opacity,transform,visibility' });
+      if (footerEl) footerEl.classList.remove('modal-active');
       document.body.style.overflow = '';
       if (contactToggle) {
         contactToggle.classList.remove('hidden');
         updateContactToggleVisibility();
       }
     }});
+    overlayActive = false;
+    if (pageFadeOverlay) gsap.set(pageFadeOverlay, { opacity: 0 });
   }
 
   // ScrollTrigger para cerrar el formulario al hacer scroll hacia arriba
@@ -284,6 +305,12 @@ document.addEventListener('DOMContentLoaded', () => {
     trigger: footerFormContainer,
     start: 'top bottom',
     end: 'bottom top',
+    onUpdate: (self) => {
+      if (overlayActive && self.direction === -1) {
+        overlayActive = false;
+        if (pageFadeOverlay) gsap.to(pageFadeOverlay, { opacity: 0, duration: 0.3, ease: 'power2.out' });
+      }
+    },
     onLeaveBack: () => {
       if (footerFormContainer.classList.contains('active')) {
         closeFooter();
