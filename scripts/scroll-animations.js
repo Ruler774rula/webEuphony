@@ -189,74 +189,82 @@ document.addEventListener('DOMContentLoaded', () => {
   
 
 
-  // Fade-in difuminado solo del texto (h2 y p) entre imágenes al hacer scroll
+  const isSmall = window.matchMedia('(max-width: 768px)').matches;
   const textBlocks = document.querySelectorAll('.text-content');
-  textBlocks.forEach((container) => {
-    const items = container.querySelectorAll('h2, p');
-    gsap.to(items, {
-      opacity: 1,
-      y: 0,
-      filter: 'blur(0px)',
-      duration: 0.8,
-      ease: 'power2.out',
-      stagger: 0.1,
-      scrollTrigger: {
-        trigger: container,
-        start: 'top 80%', // aparece antes al entrar el bloque
-        end: 'top 60%',   // completa pronto para reducir espera
-        toggleActions: 'play none none reverse'
-      }
+  if (!isSmall) {
+    textBlocks.forEach((container) => {
+      const items = container.querySelectorAll('h2, p');
+      gsap.to(items, {
+        opacity: 1,
+        y: 0,
+        filter: 'blur(0px)',
+        duration: 0.8,
+        ease: 'power2.out',
+        stagger: 0.1,
+        scrollTrigger: {
+          trigger: container,
+          start: 'top 80%',
+          end: 'top 60%',
+          toggleActions: 'play none none reverse'
+        }
+      });
     });
-  });
+  }
 
   // Separadores: fade-in con blur antes de cada imagen
   const separators = document.querySelectorAll('.separator');
-  separators.forEach((sep) => {
-    gsap.to(sep, {
-      opacity: 1,
-      filter: 'blur(0px)',
-      duration: 0.6,
-      ease: 'power2.out',
-      scrollTrigger: {
-        trigger: sep,
-        start: 'top 85%',
-        end: 'top 75%',
-        toggleActions: 'play none none reverse'
-      }
+  if (!isSmall) {
+    separators.forEach((sep) => {
+      gsap.to(sep, {
+        opacity: 1,
+        filter: 'blur(0px)',
+        duration: 0.6,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: sep,
+          start: 'top 85%',
+          end: 'top 75%',
+          toggleActions: 'play none none reverse'
+        }
+      });
     });
-  });
+  }
 
   const directImages = document.querySelectorAll('.image-container .focus-frame > img');
-  directImages.forEach((img) => {
-    const container = img.closest('.image-container');
-    if (!container) return;
-    gsap.fromTo(img, { yPercent: -35 }, {
-      yPercent: 35,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: container,
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: true
-      }
+  if (!isSmall) {
+    directImages.forEach((img) => {
+      const container = img.closest('.image-container');
+      if (!container) return;
+      gsap.fromTo(img, { yPercent: -35 }, {
+        yPercent: 35,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: container,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: true
+        }
+      });
     });
-  });
+  }
 
   const collageImgs = document.querySelectorAll('.focus-frame .collage-item img');
-  collageImgs.forEach((img) => {
-    const container = img.closest('.image-container');
-    if (!container) return;
-    gsap.fromTo(img, { yPercent: -35 }, {
-      yPercent: 35,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: container,
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: true
-      }
+  if (!isSmall) {
+    collageImgs.forEach((img) => {
+      const container = img.closest('.image-container');
+      if (!container) return;
+      gsap.fromTo(img, { yPercent: -35 }, {
+        yPercent: 35,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: container,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: true
+        }
+      });
     });
-  });
+  }
   const placeholderGif = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
   const directManaged = Array.from(document.querySelectorAll('.image-container .focus-frame > img'));
   const directUnloadTimers = new Map();
