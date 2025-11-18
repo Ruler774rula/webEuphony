@@ -21,6 +21,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
         if (!img.hasAttribute('fetchpriority')) img.setAttribute('fetchpriority', 'low');
       }
+      img.onerror = () => {
+        console.error(`Error loading image: ${img.src}`);
+        img.classList.add('errored-image'); // Add a class to style errored images
+        // Optionally, replace with a placeholder or retry loading
+        // img.src = './placeholder.jpg'; 
+      };
     });
     firstThreeMain.forEach((im) => {
       if (im && im.decode) {
@@ -28,11 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   };
-  if ('requestIdleCallback' in window) {
-    requestIdleCallback(allImgsInit);
-  } else {
-    setTimeout(allImgsInit, 0);
-  }
+  allImgsInit();
   const paths = document.querySelectorAll('#logoStroke path');
   paths.forEach(p => {
     const length = p.getTotalLength();
@@ -283,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
     img.src = src;
     img.style.display = '';
     img.style.visibility = 'visible';
-    gsap.fromTo(img, { opacity: 0, filter: 'blur(16px)' }, { opacity: 1, filter: 'blur(0px)', duration: 0.7, ease: 'power2.out' });
+    gsap.fromTo(img, { opacity: 0, filter: 'blur(16px)' }, { opacity: 1, filter: 'blur(0px)', duration: 1.0, ease: 'power2.out' });
     img.dataset.loaded = 'true';
     img.dataset.loading = 'false';
     directLoading = false;
@@ -408,12 +410,42 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!ok) { continue; }
         img.style.visibility = 'visible';
         img.style.display = '';
-        gsap.fromTo(img, { opacity: 0, filter: 'blur(16px)' }, { opacity: 1, filter: 'blur(0px)', duration: 0.8, ease: 'power2.out', onComplete: () => { img.dataset.loaded = 'true'; } });
+        gsap.fromTo(img, { opacity: 0, filter: 'blur(16px)' }, { opacity: 1, filter: 'blur(0px)', duration: 1.1, ease: 'power2.out', onComplete: () => { img.dataset.loaded = 'true'; } });
       }
     };
     const tasks = [];
     for (let i = 0; i < concurrency; i++) tasks.push(worker());
     await Promise.all(tasks);
+  };
+  const reloadCollageImage = async (img) => {
+    if (!img) return;
+    if (img.dataset.reloading === 'true') return;
+    const src = img.dataset.src || img.getAttribute('src');
+    if (!src) return;
+    img.dataset.reloading = 'true';
+    await new Promise((resolve) => {
+      gsap.to(img, { opacity: 0, filter: 'blur(16px)', duration: 0.25, ease: 'power2.in', onComplete: resolve });
+    });
+    img.dataset.loaded = 'false';
+    img.style.visibility = 'hidden';
+    img.removeAttribute('src');
+    img.style.display = 'none';
+    let ok = false;
+    for (let attempt = 0; attempt < 3 && !ok; attempt++) {
+      await preloadSrc(src);
+      img.src = src;
+      img.style.display = '';
+      try {
+        if (img.decode) { await img.decode(); } else { await waitForLoad(img); }
+      } catch {}
+      if (img.complete && img.naturalWidth > 0) { ok = true; break; }
+      img.removeAttribute('src');
+      img.style.display = 'none';
+      await new Promise((r) => setTimeout(r, 250));
+    }
+    if (!ok) { img.dataset.reloading = 'false'; return; }
+    img.style.visibility = 'visible';
+    gsap.fromTo(img, { opacity: 0, filter: 'blur(16px)' }, { opacity: 1, filter: 'blur(0px)', duration: 1.0, ease: 'power2.out', onComplete: () => { img.dataset.loaded = 'true'; img.dataset.reloading = 'false'; } });
   };
   const collageWrap = document.querySelector('.focus-frame .collage-track');
   if (collageWrap) {
@@ -445,6 +477,16 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       runCollageSequence();
     }
+  }
+  const collageItems = document.querySelectorAll('.focus-frame .collage-item');
+  if (collageItems.length) {
+    collageItems.forEach((item) => {
+      item.addEventListener('mouseenter', () => {
+        const img = item.querySelector('img');
+        if (!img) return;
+        reloadCollageImage(img);
+      });
+    });
   }
   const collageRows = document.querySelectorAll('.collage-row');
   if (collageRows.length) {

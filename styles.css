@@ -294,6 +294,16 @@ body {
   .content-overlay h2 {
     font-size: 2.5rem;
   }
+
+.errored-image {
+  background-color: #ccc;
+  /* Opcional: añadir un icono de error o texto */
+  content: 'Error al cargar imagen';
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Asegura que el espacio se mantenga */
+}
   .content-overlay p {
     font-size: 1.2rem;
   }
@@ -541,6 +551,7 @@ form {
   padding: 1rem;
   border-radius: 8px;
   font-size: 1rem;
+  font-family: 'NEXTART', sans-serif;
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
@@ -686,7 +697,7 @@ form {
 .image-container {
     width: 100%;
     position: relative;
-    height: 100vh; /* menos alto para reducir separación general */
+    height: 120vh;
     display: flex;
     align-items: flex-end; /* marquito pegado abajo */
     justify-content: center;
@@ -698,9 +709,9 @@ form {
 
 /* Marco de enfoque (máscara) */
 .focus-frame {
-  width: calc(100vw - clamp(48px, 6vw, 88px));
+  width: calc(100vw - clamp(64px, 8vw, 104px));
   max-width: none;
-  height: 80vh;
+  height: 92vh;
   overflow: hidden;
   border-radius: 16px;
   position: relative;
@@ -767,6 +778,7 @@ form {
   filter: blur(0px);
 }
 
+
 .collage-track {
   position: absolute;
   inset: 0;
@@ -779,7 +791,7 @@ form {
   left: 0;
   display: flex;
   align-items: center;
-  gap: clamp(12px, 2vw, 20px);
+  gap: clamp(16px, 2.4vw, 24px);
   width: max-content;
   animation-name: collagePan;
   animation-timing-function: linear;
@@ -879,7 +891,7 @@ form {
     transform: translateY(0);
 }
 .separator {
-    width: calc(100vw - clamp(48px, 6vw, 88px));
+    width: calc(100vw - clamp(64px, 8vw, 104px));
     height: 2px;
     margin: 8px auto 16px; /* compacta separación entre texto e imagen */
     background: linear-gradient(90deg, rgba(255,255,255,0.1), rgba(255,255,255,0.35), rgba(255,255,255,0.1));
@@ -899,7 +911,9 @@ form {
     height: auto;
   }
   .focus-frame {
-    height: 64vh;
+    height: min(64vh, 100vw);
+    max-height: 100vw;
+    aspect-ratio: 1 / 1;
     border-radius: 12px;
   }
   .focus-frame img {
