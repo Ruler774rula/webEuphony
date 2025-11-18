@@ -52,6 +52,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'MagnoliaScript';
+  src: url('./public/Magnolia Script.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Variables CSS */
 :root {
   --primary-color: #d4af37;
@@ -801,11 +809,35 @@ html {
   will-change: transform, opacity, filter;
 }
 
+.focus-frame .frame-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-family: 'NEXTART', sans-serif;
+  font-weight: 900;
+  font-size: clamp(22px, 5vw, 64px);
+  letter-spacing: 0.5px;
+  z-index: 4;
+  opacity: 0;
+  filter: blur(12px);
+  transition: opacity 0.6s ease, filter 0.6s ease, transform 0.6s ease;
+  text-align: center;
+  pointer-events: none;
+}
+
+.focus-frame img[data-loaded="true"] ~ .frame-label {
+  opacity: 1;
+  filter: blur(0px);
+}
+
 .collage-track {
   position: absolute;
   inset: 0;
   height: 100%;
   overflow: hidden;
+  background-color: #000;
 }
 .collage-row {
   position: absolute;
@@ -827,7 +859,7 @@ html {
   flex: 0 0 auto;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  box-shadow: none;
   background: #000;
   height: 100%;
 }
@@ -868,7 +900,8 @@ html {
 }
 
 .text-content {
-    height: 16vh; /* aún menos separación con la siguiente imagen */
+    height: auto;
+    min-height: 18vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -882,7 +915,7 @@ html {
     margin: 0 auto;
     padding-inline: clamp(12px, 2.5vw, 24px);
     content-visibility: auto;
-    contain-intrinsic-size: 16vh;
+    contain-intrinsic-size: 18vh;
 }
 
 .footer-form-container.active {
@@ -897,6 +930,18 @@ html {
     transform: translateY(20px); /* pequeño desplazamiento hacia abajo */
     filter: blur(6px); /* difuminado inicial */
     will-change: opacity, transform, filter; /* mejor rendimiento en animación */
+    font-family: 'MagnoliaScript', 'NEXTART', sans-serif;
+}
+
+.text-content h2 {
+  font-size: clamp(36px, 6.8vw, 36px);
+  line-height: 1.3;
+}
+
+.text-content p {
+  font-size: clamp(18px, 3.6vw, 20px);
+  line-height: 2.6;
+  max-width: 1024px;
 }
 
 .text-content.visible {
