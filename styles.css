@@ -9,6 +9,7 @@
   src: url('./public/Foglihtenno07-e9wz3.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -16,6 +17,7 @@
   src: url('./public/MILONER-Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -23,6 +25,7 @@
   src: url('./public/PlayfairDisplayBlack-RpvVA.ttf') format('truetype');
   font-weight: 900;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -30,6 +33,7 @@
   src: url('./public/RuntimeRegular-m2Odx.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 /* Nueva fuente: NEXT ART Heavy */
@@ -38,12 +42,14 @@
   src: url('./public/NEXT ART_Heavy.otf') format('opentype');
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 @font-face {
   font-family: 'NEXTART';
   src: url('./public/NEXT ART_Heavy.otf') format('opentype');
   font-weight: 900;
   font-style: normal;
+  font-display: swap;
 }
 
 /* Variables CSS */
@@ -742,6 +748,9 @@ html {
     align-items: flex-end; /* marquito pegado abajo */
     justify-content: center;
     background-color: #000; /* continuidad con el fondo */
+    content-visibility: auto;
+    contain-intrinsic-size: 100vh;
+    contain: layout paint;
 }
 
 /* Marco de enfoque (máscara) */
@@ -754,6 +763,7 @@ html {
   position: relative;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
   isolation: isolate;
+  contain: layout paint;
 }
 .focus-frame::before,
 .focus-frame::after {
@@ -785,6 +795,12 @@ html {
     will-change: transform;
 }
 
+.image-container .focus-frame > img {
+  opacity: 0;
+  filter: blur(16px);
+  will-change: transform, opacity, filter;
+}
+
 .collage-track {
   position: absolute;
   inset: 0;
@@ -803,6 +819,7 @@ html {
   animation-iteration-count: infinite;
   animation-direction: reverse;
   will-change: transform;
+  content-visibility: auto;
 }
 .row-top { top: 0; height: 58%; animation-duration: 140s; z-index: 3; }
 .row-bot { bottom: 0; height: 48%; animation-duration: 160s; }
@@ -820,7 +837,9 @@ html {
   object-fit: cover;
   display: block;
   transform: translateY(-20%);
-  will-change: transform;
+  opacity: 0;
+  filter: blur(16px);
+  will-change: transform, opacity, filter;
 }
 .collage-item.w-s { width: clamp(140px, 12vw, 220px); }
 .collage-item.w-m { width: clamp(240px, 22vw, 380px); }
@@ -862,6 +881,8 @@ html {
     width: calc(100vw - clamp(48px, 6vw, 88px));
     margin: 0 auto;
     padding-inline: clamp(12px, 2.5vw, 24px);
+    content-visibility: auto;
+    contain-intrinsic-size: 16vh;
 }
 
 .footer-form-container.active {
@@ -890,6 +911,8 @@ html {
     opacity: 0; /* aparece con GSAP */
     filter: blur(6px);
     will-change: opacity, filter;
+    content-visibility: auto;
+    contain-intrinsic-size: 2px;
 }
 .spacer {
     height: 0; /* reducir al mínimo la separación */
@@ -1011,4 +1034,8 @@ html {
   top: 24px;
   left: 46px;
   z-index: 1305;
+}
+@media (prefers-reduced-motion: reduce) {
+  .collage-row { animation-play-state: paused !important; }
+  .discover-prompt .arrow { animation: none !important; }
 }

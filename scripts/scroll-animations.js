@@ -6,6 +6,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Animación de loader SVG (trazo en 1s)
   gsap.registerPlugin(ScrollTrigger);
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    gsap.ticker.fps(30);
+  }
+  const allImgsInit = () => {
+    const firstMainImg = document.querySelector('.image-container .focus-frame > img');
+    const imgs = document.querySelectorAll('img');
+    imgs.forEach((img) => {
+      if (!img.hasAttribute('decoding')) img.setAttribute('decoding', 'async');
+    });
+    if (firstMainImg) {
+      firstMainImg.setAttribute('loading', 'eager');
+      firstMainImg.setAttribute('fetchpriority', 'high');
+      if (firstMainImg.decode) {
+        firstMainImg.decode().catch(() => {});
+      }
+    }
+    imgs.forEach((img) => {
+      if (img !== firstMainImg) {
+        if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
+        if (!img.hasAttribute('fetchpriority')) img.setAttribute('fetchpriority', 'low');
+      }
+    });
+  };
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(allImgsInit);
+  } else {
+    setTimeout(allImgsInit, 0);
+  }
   const loader = document.getElementById('loader');
   const paths = document.querySelectorAll('#logoStroke path');
   paths.forEach(p => {
@@ -92,6 +120,26 @@ document.addEventListener('DOMContentLoaded', () => {
       scrub: true,
       pin: true,
       ease: 'power1.out',
+      onLeave: () => {
+        const srcEl = video ? video.querySelector('source') : null;
+        if (video) {
+          video.pause();
+          if (srcEl) {
+            if (!srcEl.dataset.src) srcEl.dataset.src = srcEl.src;
+            srcEl.removeAttribute('src');
+            video.load();
+          }
+        }
+      },
+      onEnterBack: () => {
+        const srcEl = video ? video.querySelector('source') : null;
+        if (video && srcEl && srcEl.dataset.src) {
+          srcEl.src = srcEl.dataset.src;
+          video.load();
+          const p = video.play();
+          if (p && p.catch) p.catch(() => {});
+        }
+      }
     },
   });
 
@@ -209,6 +257,192 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+  const placeholderGif = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+  const directManaged = Array.from(document.querySelectorAll('.image-container .focus-frame > img'));
+  const directUnloadTimers = new Map();
+  const prepareDirect = (imgs) => {
+    imgs.forEach((img) => {
+      if (!img.dataset.src) img.dataset.src = img.getAttribute('src');
+      if (img.dataset.src) {
+        img.removeAttribute('src');
+        img.src = placeholderGif;
+      }
+      img.setAttribute('decoding', 'async');
+      img.setAttribute('fetchpriority', 'low');
+      img.setAttribute('loading', 'lazy');
+      img.dataset.loaded = 'false';
+      img.dataset.loading = 'false';
+      img.style.visibility = 'hidden';
+    });
+  };
+  prepareDirect(directManaged);
+  const preloadImg = (src) => new Promise((resolve) => {
+    const pre = new Image();
+    pre.decoding = 'async';
+    pre.loading = 'eager';
+    pre.setAttribute('fetchpriority', 'high');
+    pre.src = src;
+    const done = () => resolve();
+    if (pre.decode) {
+      pre.decode().then(done).catch(() => { pre.onload = done; });
+    } else {
+      pre.onload = done;
+    }
+  });
+  const directQueue = [];
+  let directLoading = false;
+  const processDirectQueue = async () => {
+    if (directLoading || directQueue.length === 0) return;
+    directLoading = true;
+    const img = directQueue.shift();
+    if (!img || img.dataset.loading === 'true' || img.dataset.loaded === 'true') {
+      directLoading = false;
+      processDirectQueue();
+      return;
+    }
+    const src = img.dataset.src;
+    if (!src) {
+      directLoading = false;
+      processDirectQueue();
+      return;
+    }
+    img.dataset.loading = 'true';
+    await preloadImg(src);
+    img.src = src;
+    img.style.visibility = 'visible';
+    gsap.fromTo(img, { opacity: 0, filter: 'blur(16px)' }, { opacity: 1, filter: 'blur(0px)', duration: 0.7, ease: 'power2.out' });
+    img.dataset.loaded = 'true';
+    img.dataset.loading = 'false';
+    directLoading = false;
+    processDirectQueue();
+  };
+  const enqueueDirect = (img) => {
+    if (!img || img.dataset.loaded === 'true' || img.dataset.loading === 'true') return;
+    directQueue.push(img);
+    processDirectQueue();
+  };
+  const unloadDirect = (img) => {
+    if (!img || img.dataset.loaded !== 'true') return;
+    gsap.to(img, { opacity: 0, filter: 'blur(16px)', duration: 0.4, ease: 'power2.in', onComplete: () => {
+      img.src = placeholderGif;
+      img.dataset.loaded = 'false';
+      img.style.visibility = 'hidden';
+    }});
+  };
+  if ('IntersectionObserver' in window) {
+    const ioD = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        const img = e.target;
+        if (e.isIntersecting) {
+          const t = directUnloadTimers.get(img);
+          if (t) { clearTimeout(t); directUnloadTimers.delete(img); }
+          enqueueDirect(img);
+        } else {
+          const h = setTimeout(() => {
+            const rect = img.getBoundingClientRect();
+            const margin = 300;
+            const offscreen = (rect.bottom < -margin) || (rect.top > (window.innerHeight + margin));
+            if (offscreen) {
+              unloadDirect(img);
+            } else {
+              enqueueDirect(img);
+            }
+          }, 1500);
+          directUnloadTimers.set(img, h);
+        }
+      });
+    }, { rootMargin: '600px 0px 600px 0px', threshold: 0 });
+    directManaged.forEach((img) => ioD.observe(img));
+  } else {
+    directManaged.forEach((img) => enqueueDirect(img));
+  }
+  const collageTop = Array.from(document.querySelectorAll('.collage-row.row-top .collage-item img'));
+  const collageBot = Array.from(document.querySelectorAll('.collage-row.row-bot .collage-item img'));
+  const prepareImgs = (imgs) => {
+    imgs.forEach((img) => {
+      const src = img.getAttribute('src');
+      if (src && !img.dataset.src) {
+        img.dataset.src = src;
+      }
+      img.removeAttribute('src');
+      img.setAttribute('decoding', 'async');
+      img.setAttribute('fetchpriority', 'low');
+      img.setAttribute('loading', 'lazy');
+      img.src = placeholderGif;
+    });
+  };
+  prepareImgs([...collageTop, ...collageBot]);
+  const preloadSrc = (src) => new Promise((resolve) => {
+    const pre = new Image();
+    pre.decoding = 'async';
+    pre.loading = 'eager';
+    pre.setAttribute('fetchpriority', 'low');
+    pre.src = src;
+    const done = () => resolve();
+    if (pre.decode) {
+      pre.decode().then(done).catch(() => { pre.onload = done; });
+    } else {
+      pre.onload = done;
+    }
+  });
+  const runCollageSequence = async () => {
+    const seq = [];
+    const max = Math.max(collageTop.length, collageBot.length);
+    for (let i = 0; i < max; i++) {
+      if (collageTop[i]) seq.push(collageTop[i]);
+      if (collageBot[i]) seq.push(collageBot[i]);
+    }
+    for (const img of seq) {
+      const src = img.dataset.src;
+      if (!src) continue;
+      await preloadSrc(src);
+      img.src = src;
+      gsap.fromTo(img, { opacity: 0, filter: 'blur(16px)' }, { opacity: 1, filter: 'blur(0px)', duration: 0.8, ease: 'power2.out' });
+    }
+  };
+  const collageWrap = document.querySelector('.focus-frame .collage-track');
+  if (collageWrap) {
+    if ('IntersectionObserver' in window) {
+      let started = false;
+      const io2 = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting && !started) {
+            started = true;
+            runCollageSequence();
+          } else if (!e.isIntersecting && started) {
+            [...collageTop, ...collageBot].forEach((img) => {
+              gsap.to(img, { opacity: 0, filter: 'blur(16px)', duration: 0.4, ease: 'power2.in', onComplete: () => {
+                img.src = placeholderGif;
+                img.dataset.loaded = 'false';
+              }});
+            });
+            started = false;
+          }
+        });
+      }, { rootMargin: '400px 0px 400px 0px', threshold: 0 });
+      io2.observe(collageWrap);
+    } else {
+      runCollageSequence();
+    }
+  }
+  const collageRows = document.querySelectorAll('.collage-row');
+  if (collageRows.length) {
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          entry.target.style.animationPlayState = entry.isIntersecting ? 'running' : 'paused';
+        });
+      }, { threshold: 0.01 });
+      collageRows.forEach((row) => {
+        row.style.animationPlayState = 'paused';
+        io.observe(row);
+      });
+    } else {
+      collageRows.forEach((row) => {
+        row.style.animationPlayState = 'running';
+      });
+    }
+  }
 
   const footerContactBtn = document.getElementById('footerContactBtn');
   const footerFormContainer = document.getElementById('footerFormContainer');
