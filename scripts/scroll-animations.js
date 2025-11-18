@@ -8,6 +8,35 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     gsap.ticker.fps(30);
   }
+  const isSmall = window.matchMedia('(max-width: 768px)').matches;
+  const fadeSpan = isSmall ? 120 : 200;
+  const isContact = document.body.classList.contains('contact-page');
+  if (!isContact) {
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    const qs = new URLSearchParams(location.search);
+    const needTop = qs.get('top') === '1' || location.hash === '#top';
+    if (needTop) {
+      const restoreBehavior = document.documentElement.style.scrollBehavior;
+      const forceTop = () => {
+        document.documentElement.style.scrollBehavior = 'auto';
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+        window.scrollTo({ top: 0, behavior: 'auto' });
+        document.documentElement.style.scrollBehavior = restoreBehavior || '';
+      };
+      forceTop();
+      setTimeout(forceTop, 0);
+      setTimeout(forceTop, 80);
+      window.addEventListener('load', forceTop, { once: true });
+      window.addEventListener('pageshow', forceTop, { once: true });
+    }
+  }
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) && !/CriOS|FxiOS/i.test(navigator.userAgent);
+  if (isIOS) {
+    document.querySelectorAll('.image-container, .collage-row').forEach((el) => {
+      el.style.contentVisibility = 'visible';
+    });
+  }
   const allImgsInit = () => {
     const mainImgs = Array.from(document.querySelectorAll('.image-container .focus-frame > img'));
     const firstThreeMain = mainImgs.slice(0, 3);
@@ -35,49 +64,61 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
   allImgsInit();
-  const paths = document.querySelectorAll('#logoStroke path');
-  paths.forEach(p => {
-    const length = p.getTotalLength();
-    p.style.strokeDasharray = length;
-    p.style.strokeDashoffset = length;
-  });
-  // Timeline de GSAP para la animación de carga
-  const tl = gsap.timeline();
-
-  tl.to('#logoStroke path', { strokeDashoffset: 0, duration: 1.5, stagger: 0 })
-    .to('#logoColor', { opacity: 1, duration: 0.8 }, "-=0.5") // Solapar para una transición más suave
-    // Revela el logo desde el lado (izquierdo) con máscara sobredimensionada para evitar bordes visibles
-    .fromTo(
-      '.logo',
-      {
-        clipPath: 'polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)'
-      },
-      {
-        clipPath: 'polygon(-20% 0%, 120% 0%, 120% 100%, -20% 100%)',
-        duration: 1.5,
-        ease: 'power2.inOut'
-      },
-      "+=0.2"
-    ) // Iniciar poco después de que el color aparezca
-    .to('.loader', { 
-        opacity: 0, 
-        duration: 1, 
-        onComplete: () => {
-          if (document.querySelector('.loader')) {
-            document.querySelector('.loader').style.display = 'none';
+  if (!isContact) {
+    const paths = document.querySelectorAll('#logoStroke path');
+    paths.forEach(p => {
+      const length = p.getTotalLength();
+      p.style.strokeDasharray = length;
+      p.style.strokeDashoffset = length;
+    });
+    const tl = gsap.timeline();
+    tl.to('#logoStroke path', { strokeDashoffset: 0, duration: 1.5, stagger: 0 })
+      .to('#logoColor', { opacity: 1, duration: 0.8 }, "-=0.5")
+      .fromTo(
+        '.logo',
+        { clipPath: 'polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)' },
+        { clipPath: 'polygon(-20% 0%, 120% 0%, 120% 100%, -20% 100%)', duration: 1.5, ease: 'power2.inOut' },
+        "+=0.2"
+      )
+      .to('.loader', { 
+          opacity: 0, 
+          duration: 1, 
+          onComplete: () => {
+            if (document.querySelector('.loader')) {
+              document.querySelector('.loader').style.display = 'none';
+            }
           }
-        }
-    }, "<") // Iniciar al mismo tiempo que la animación del clip-path
-    // Mostrar y desvanecer el video de fondo tras el loader
-    .set('#video-container', { display: 'block' })
-    .fromTo('#video-container', { opacity: 0 }, { opacity: 1, duration: 1.2, ease: 'power2.out' })
-    .to('#bg-video', { scale: 1.02, duration: 6, ease: 'power1.inOut' }, "<")
-    // Mostrar el prompt de "Descubrir más" bajo el logo
-    .fromTo('#discoverPrompt', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, "<");
+      }, "<")
+      .set('#video-container', { display: 'block' })
+      .fromTo('#video-container', { opacity: 0 }, { opacity: 1, duration: 1.2, ease: 'power2.out' })
+      .to('#bg-video', { scale: 1.02, duration: 6, ease: 'power1.inOut' }, "<")
+      .fromTo('#discoverPrompt', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, "<");
+  } else {
+    const container = document.getElementById('footerFormContainer');
+    const itemsPre = container ? container.querySelectorAll('.contact-form .form-header, .contact-form .form-group, .contact-form .submit-btn') : [];
+    if (container) {
+      gsap.killTweensOf(container);
+      gsap.set(container, { opacity: 0, visibility: 'hidden' });
+    }
+    if (itemsPre && itemsPre.length) {
+      gsap.killTweensOf(itemsPre);
+      gsap.set(itemsPre, { opacity: 0, x: -60, visibility: 'hidden' });
+    }
+    const restoreBehavior = document.documentElement.style.scrollBehavior;
+    document.documentElement.style.scrollBehavior = 'auto';
+    window.scrollTo({ top: Math.max(0, document.documentElement.scrollHeight), behavior: 'auto' });
+    document.documentElement.style.scrollBehavior = restoreBehavior || '';
+    const tlc = gsap.timeline();
+    tlc.to(document.body, { opacity: 1, duration: 0.35, ease: 'power2.out' })
+      .add(() => {
+        if (container) gsap.set(container, { visibility: 'visible', opacity: 1 });
+      })
+      .to(itemsPre, { opacity: 1, x: 0, autoAlpha: 1, duration: 1.1, ease: 'power3.out', stagger: 0.12 });
+  }
 
   // Ocultar el prompt "Descubrir más" en cuanto se inicia el primer scroll; reaparece solo al volver al top
   const discoverPrompt = document.getElementById('discoverPrompt');
-  if (discoverPrompt) {
+  if (!isContact && discoverPrompt) {
     // Si la página no está en el tope al cargar, mantener oculto
     if (window.scrollY > 0) {
       gsap.set(discoverPrompt, { autoAlpha: 0 });
@@ -110,51 +151,54 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Animate the video to fade to black on scroll
-  gsap.to(video, {
-    opacity: 0,
-    scrollTrigger: {
-      trigger: videoSpacer,
-      start: 'top top',
-      end: '+=200',
-      scrub: true,
-      pin: true,
-      ease: 'power1.out',
-      onLeave: () => {
-        const srcEl = video ? video.querySelector('source') : null;
-        if (video) {
-          video.pause();
-          if (srcEl) {
-            if (!srcEl.dataset.src) srcEl.dataset.src = srcEl.src;
-            srcEl.removeAttribute('src');
+  if (!isContact && videoSpacer && video) {
+    gsap.to(video, {
+      opacity: 0,
+      scrollTrigger: {
+        trigger: videoSpacer,
+        start: 'top top',
+        end: '+=' + fadeSpan,
+        scrub: true,
+        pin: !isSmall,
+        ease: 'power1.out',
+        onLeave: () => {
+          const srcEl = video ? video.querySelector('source') : null;
+          if (video) {
+            video.pause();
+            if (srcEl) {
+              if (!srcEl.dataset.src) srcEl.dataset.src = srcEl.src;
+              srcEl.removeAttribute('src');
+              video.load();
+            }
+          }
+        },
+        onEnterBack: () => {
+          const srcEl = video ? video.querySelector('source') : null;
+          if (video && srcEl && srcEl.dataset.src) {
+            srcEl.src = srcEl.dataset.src;
             video.load();
+            const p = video.play();
+            if (p && p.catch) p.catch(() => {});
           }
         }
       },
-      onEnterBack: () => {
-        const srcEl = video ? video.querySelector('source') : null;
-        if (video && srcEl && srcEl.dataset.src) {
-          srcEl.src = srcEl.dataset.src;
-          video.load();
-          const p = video.play();
-          if (p && p.catch) p.catch(() => {});
-        }
-      }
-    },
-  });
+    });
+  }
 
-  gsap.to(logo, {
-    autoAlpha: 0,
-    scrollTrigger: {
-      trigger: videoSpacer,
-      start: 'top top',
-      end: '+=200',
-      scrub: true
-    }
-  });
+  if (!isContact && videoSpacer && logo) {
+    gsap.to(logo, {
+      autoAlpha: 0,
+      scrollTrigger: {
+        trigger: videoSpacer,
+        start: 'top top',
+        end: '+=' + fadeSpan,
+        scrub: true
+      }
+    });
+  }
 
   const mainContent = document.querySelector('.main-content');
-  if (mainContent) {
+  if (!isContact && mainContent && videoSpacer) {
     gsap.set(mainContent, { autoAlpha: 0 });
     ScrollTrigger.create({
       trigger: videoSpacer,
@@ -188,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
 
 
-  const isSmall = window.matchMedia('(max-width: 768px)').matches;
+  
   // const textBlocks = document.querySelectorAll('.text-content');
 
   // Separadores: fade-in con blur antes de cada imagen
@@ -238,15 +282,23 @@ document.addEventListener('DOMContentLoaded', () => {
     imgs.forEach((img) => {
       if (!img.dataset.src) img.dataset.src = img.getAttribute('src');
       if (img.dataset.src) {
-        img.removeAttribute('src');
-        img.style.display = 'none';
+        if (!isSmall) {
+          img.removeAttribute('src');
+          img.style.display = 'none';
+        } else {
+          img.src = img.dataset.src;
+        }
       }
       img.setAttribute('decoding', 'async');
       img.setAttribute('fetchpriority', 'low');
       img.setAttribute('loading', 'lazy');
-      img.dataset.loaded = 'false';
+      if (isSmall && img.complete && img.naturalWidth > 0) {
+        img.dataset.loaded = 'true';
+      } else {
+        img.dataset.loaded = 'false';
+      }
       img.dataset.loading = 'false';
-      img.style.visibility = 'hidden';
+      img.style.visibility = isSmall ? 'visible' : 'hidden';
     });
   };
   prepareDirect(directManaged);
@@ -262,6 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       pre.onload = done;
     }
+    pre.onerror = done;
   });
   const directQueue = [];
   let directLoading = false;
@@ -304,9 +357,32 @@ document.addEventListener('DOMContentLoaded', () => {
     img.setAttribute('fetchpriority', 'high');
     enqueueDirect(img);
   });
+  const forceLoadPersist = async (imgs) => {
+    for (const img of imgs) {
+      if (!img) continue;
+      let src = img.dataset.src || img.getAttribute('src');
+      if (!src) continue;
+      img.dataset.loading = 'true';
+      img.src = src;
+      img.style.display = '';
+      img.style.visibility = 'visible';
+      try { if (img.decode) { await img.decode(); } } catch {}
+      if (!(img.complete && img.naturalWidth > 0)) {
+        const bust = src + (src.includes('?') ? '&' : '?') + 'v=' + Date.now();
+        src = bust;
+        img.src = bust;
+        try { if (img.decode) { await img.decode(); } } catch {}
+      }
+      gsap.to(img, { opacity: 1, filter: 'blur(0px)', duration: 0.8, ease: 'power2.out' });
+      img.dataset.loaded = 'true';
+      img.dataset.loading = 'false';
+    }
+  };
+  forceLoadPersist(directPersist);
   const unloadDirect = (img) => {
     if (!img || img.dataset.loaded !== 'true') return;
     if (img.dataset.persist === 'true') return;
+    if (isSmall) return;
     gsap.to(img, { opacity: 0, filter: 'blur(16px)', duration: 0.4, ease: 'power2.in', onComplete: () => {
       img.removeAttribute('src');
       img.dataset.loaded = 'false';
@@ -374,6 +450,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       pre.onload = done;
     }
+    pre.onerror = done;
   });
   const waitForLoad = (img) => new Promise((resolve, reject) => {
     if (img.complete && img.naturalWidth > 0) { resolve(); return; }
@@ -406,6 +483,14 @@ document.addEventListener('DOMContentLoaded', () => {
           img.removeAttribute('src');
           img.style.display = 'none';
           await new Promise((r) => setTimeout(r, 250));
+        }
+        if (!ok) {
+          const bust = src + (src.includes('?') ? '&' : '?') + 'v=' + Date.now();
+          await preloadSrc(bust);
+          img.src = bust;
+          img.style.display = '';
+          try { if (img.decode) { await img.decode(); } else { await waitForLoad(img); } } catch {}
+          if (!(img.complete && img.naturalWidth > 0)) { continue; }
         }
         if (!ok) { continue; }
         img.style.visibility = 'visible';
@@ -442,6 +527,15 @@ document.addEventListener('DOMContentLoaded', () => {
       img.removeAttribute('src');
       img.style.display = 'none';
       await new Promise((r) => setTimeout(r, 250));
+    }
+    if (!ok) {
+      const bust = src + (src.includes('?') ? '&' : '?') + 'v=' + Date.now();
+      await preloadSrc(bust);
+      img.src = bust;
+      img.style.display = '';
+      try { if (img.decode) { await img.decode(); } else { await waitForLoad(img); } } catch {}
+      if (!(img.complete && img.naturalWidth > 0)) { img.dataset.reloading = 'false'; return; }
+      ok = true;
     }
     if (!ok) { img.dataset.reloading = 'false'; return; }
     img.style.visibility = 'visible';
@@ -577,7 +671,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  footerContactBtn.addEventListener('click', openFooter);
+  function navigateWithFade(url) {
+    if (pageFadeOverlay) {
+      gsap.set(pageFadeOverlay, { opacity: 0 });
+      gsap.to(pageFadeOverlay, { opacity: 1, duration: 0.35, ease: 'power2.out', onComplete: () => { location.href = url; } });
+    } else {
+      gsap.to(document.body, { opacity: 0, duration: 0.35, ease: 'power2.out', onComplete: () => { location.href = url; } });
+    }
+  }
+  if (footerContactBtn) {
+    footerContactBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (footerFormContainer) {
+        openFooter();
+      } else {
+        navigateWithFade('./contacta.html');
+      }
+    });
+  }
 
   // Función para cerrar el formulario del footer
   function closeFooter() {
@@ -595,27 +706,28 @@ document.addEventListener('DOMContentLoaded', () => {
     if (pageFadeOverlay) gsap.set(pageFadeOverlay, { opacity: 0 });
   }
 
-  // ScrollTrigger para cerrar el formulario al hacer scroll hacia arriba
-  ScrollTrigger.create({
-    trigger: footerFormContainer,
-    start: 'top bottom',
-    end: 'bottom top',
-    onUpdate: (self) => {
-      if (overlayActive && self.direction === -1) {
-        overlayActive = false;
-        if (pageFadeOverlay) gsap.to(pageFadeOverlay, { opacity: 0, duration: 0.3, ease: 'power2.out' });
-      }
-    },
-    onLeaveBack: () => {
-      if (footerFormContainer.classList.contains('active')) {
-        closeFooter();
-      }
-    },
-  });
+  if (footerFormContainer && !footerFormContainer.classList.contains('active')) {
+    ScrollTrigger.create({
+      trigger: footerFormContainer,
+      start: 'top bottom',
+      end: 'bottom top',
+      onUpdate: (self) => {
+        if (overlayActive && self.direction === -1) {
+          overlayActive = false;
+          if (pageFadeOverlay) gsap.to(pageFadeOverlay, { opacity: 0, duration: 0.3, ease: 'power2.out' });
+        }
+      },
+      onLeaveBack: () => {
+        if (footerFormContainer.classList.contains('active')) {
+          closeFooter();
+        }
+      },
+    });
+  }
 
   function updateContactToggleVisibility() {
     if (!contactToggle) return;
-    if (footerFormContainer.classList.contains('active')) {
+    if (footerFormContainer && footerFormContainer.classList.contains('active')) {
       contactToggle.classList.add('hidden');
       contactToggle.style.opacity = '0';
     } else {
@@ -624,9 +736,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Vincular el botón flotante para desplazar hacia el footer
   if (contactToggle) {
-    contactToggle.addEventListener('click', openFooter);
+    contactToggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (footerFormContainer) {
+        openFooter();
+      } else {
+        navigateWithFade('./contacta.html');
+      }
+    });
   }
 
   // Actualizar en scroll y resize
@@ -663,7 +781,11 @@ document.addEventListener('DOMContentLoaded', () => {
     menuContactLink.addEventListener('click', (e) => {
       e.preventDefault();
       closeMenu();
-      openFooter();
+      if (footerFormContainer && !footerFormContainer.classList.contains('active')) {
+        openFooter();
+      } else {
+        navigateWithFade('./contacta.html');
+      }
     });
   }
 
@@ -671,11 +793,15 @@ document.addEventListener('DOMContentLoaded', () => {
     menuHomeLink.addEventListener('click', (e) => {
       e.preventDefault();
       closeMenu();
-      const restoreBehavior = document.documentElement.style.scrollBehavior;
-      document.documentElement.style.scrollBehavior = 'auto';
-      window.scrollTo({ top: 0, behavior: 'auto' });
-      document.documentElement.style.scrollBehavior = restoreBehavior || '';
-      gsap.to(document.body, { opacity: 0, duration: 0.3, ease: 'power2.out', onComplete: () => location.reload() });
+      navigateWithFade('./index.html?top=1');
+    });
+  }
+
+  const volverHeaderLink = document.getElementById('volverHeaderLink');
+  if (volverHeaderLink) {
+    volverHeaderLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      navigateWithFade('./index.html?top=1');
     });
   }
 

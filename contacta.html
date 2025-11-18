@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Euphony - Contacta</title>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="contact-page">
+  <nav class="navbar">
+    <div class="navbar-actions">
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú"><i class="fas fa-bars"></i></button>
+    </div>
+    <div class="logo-container">
+      <div class="logo">
+        <a href="#" class="logo-link">
+          <img src="Logos/LOGO EUPHONY color blanco.png" alt="Euphony Logo blanco" class="logo-img logo-white">
+          <img src="Logos/LOGO EUPHONY color blanco logo color.png" alt="Euphony Logo color" class="logo-img logo-color">
+        </a>
+      </div>
+    </div>
+    <div class="navbar-actions">
+      <a href="./index.html" class="volver-header" id="volverHeaderLink">VOLVER</a>
+    </div>
+  </nav>
+  <div id="pageFadeOverlay" class="page-fade-overlay" aria-hidden="true"></div>
+  <div class="menu-overlay" id="menuOverlay"></div>
+  <aside class="side-menu" id="sideMenu" aria-label="Menú lateral">
+    <div class="side-menu-header">
+      Menú
+      <button class="close-menu-button" id="closeMenuButton" aria-label="Cerrar menú">◣</button>
+    </div>
+    <ul class="side-menu-list">
+      <li><a href="./index.html" class="side-menu-link" id="menuHomeLink">Inicio</a></li>
+      <li><a href="#" class="side-menu-link">Sobre Nosotros</a></li>
+      <li><a href="#" class="side-menu-link">Galería</a></li>
+      <li><a href="./contacta.html" class="side-menu-link" id="menuContactLink">Contacta</a></li>
+    </ul>
+    <div class="social-icons">
+      <img src="./icons/icons8-facebook-100.png" alt="Facebook" loading="lazy" decoding="async" fetchpriority="low">
+      <img src="./icons/icons8-instagram-100.png" alt="Instagram" loading="lazy" decoding="async" fetchpriority="low">
+      <img src="./icons/icons8-linkedin-100.png" alt="LinkedIn" loading="lazy" decoding="async" fetchpriority="low">
+      <img src="./icons/icons8-whatsapp-100.png" alt="WhatsApp" loading="lazy" decoding="async" fetchpriority="low">
+      <img src="./icons/icons8-x-100.png" alt="X" loading="lazy" decoding="async" fetchpriority="low">
+      <img src="./icons/icons8-youtube-100.png" alt="YouTube" loading="lazy" decoding="async" fetchpriority="low">
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <footer class="footer modal-active" id="footer">
+      <div class="footer-form-container active" id="footerFormContainer">
+        <div class="contact-form">
+          <div class="form-header">
+            <h3>Contacta con nosotros</h3>
+          </div>
+
+          <form id="contactFormElement">
+            <div class="form-group">
+              <label for="nombre">Nombre <span class="req">*</span></label>
+              <input type="text" id="nombre" name="nombre" required>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email <span class="req">*</span></label>
+              <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+              <label for="telefono">Número de teléfono <span class="req">*</span></label>
+              <input type="tel" id="telefono" name="telefono" required>
+            </div>
+
+            <div class="form-group">
+              <label for="servicio">Servicio de interés <span class="req">*</span></label>
+              <textarea id="servicio" name="servicio" rows="4" placeholder="Describe el servicio de interés" required></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn" disabled>Enviar</button>
+          </form>
+
+          <div class="thank-you-message" id="thankYouMessage">
+            <h3>¡Gracias por contactarnos!</h3>
+            <p>Nos pondremos en contacto contigo pronto.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script defer src="./scripts/scroll-animations.js"></script>
+</body>
+</html>

@@ -2,9 +2,10 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Euphony - Bodas & Eventos</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <link rel="stylesheet" href="./styles.css">
 </head>
@@ -63,10 +64,10 @@
             <button class="close-menu-button" id="closeMenuButton" aria-label="Cerrar menú">◣</button>
           </div>
       <ul class="side-menu-list">
-        <li><a href="#" class="side-menu-link" id="menuHomeLink">Inicio</a></li>
+        <li><a href="./index.html" class="side-menu-link" id="menuHomeLink">Inicio</a></li>
         <li><a href="#" class="side-menu-link">Sobre Nosotros</a></li>
         <li><a href="#" class="side-menu-link">Galería</a></li>
-        <li><a href="#" class="side-menu-link" id="menuContactLink">Contacta</a></li>
+        <li><a href="./contacta.html" class="side-menu-link" id="menuContactLink">Contacta</a></li>
       </ul>
       <div class="social-icons">
         <img src="./icons/icons8-facebook-100.png" alt="Facebook" loading="lazy" decoding="async" fetchpriority="low">
@@ -159,44 +160,9 @@
     <div class="footer-content">
       <h3>¿Listo para crear tu evento?</h3>
       <p>Contacta con nosotros y comencemos a planificar tu día especial</p>
-      <button class="footer-contact-btn" id="footerContactBtn">CONTACTA</button>
+      <a href="./contacta.html" class="footer-contact-btn" id="footerContactBtn">CONTACTA</a>
     </div>
-    <div class="footer-form-container" id="footerFormContainer">
-      <div class="contact-form">
-        <div class="form-header">
-          <h3>Contacta con nosotros</h3>
-        </div>
-        
-        <form id="contactFormElement">
-          <div class="form-group">
-            <label for="nombre">Nombre <span class="req">*</span></label>
-            <input type="text" id="nombre" name="nombre" required>
-          </div>
-          
-          <div class="form-group">
-            <label for="email">Email <span class="req">*</span></label>
-            <input type="email" id="email" name="email" required>
-          </div>
-          
-          <div class="form-group">
-            <label for="telefono">Número de teléfono <span class="req">*</span></label>
-            <input type="tel" id="telefono" name="telefono" required>
-          </div>
-          
-          <div class="form-group">
-            <label for="servicio">Servicio de interés <span class="req">*</span></label>
-            <textarea id="servicio" name="servicio" rows="4" placeholder="Describe el servicio de interés" required></textarea>
-          </div>
-          
-          <button type="submit" class="submit-btn" disabled>Enviar</button>
-        </form>
-        
-        <div class="thank-you-message" id="thankYouMessage">
-          <h3>¡Gracias por contactarnos!</h3>
-          <p>Nos pondremos en contacto contigo pronto.</p>
-        </div>
-      </div>
-    </div>
+    
     <div class="social-icons" id="socialIcons">
       <img src="./icons/icons8-facebook-100.png" alt="Facebook" loading="lazy" decoding="async" fetchpriority="low">
       <img src="./icons/icons8-instagram-100.png" alt="Instagram" loading="lazy" decoding="async" fetchpriority="low">
@@ -209,10 +175,9 @@
 
   
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.0/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.0/ScrollTrigger.min.js"></script>
+  
   
 
-  <script src="./scripts/scroll-animations.js"></script>
+  <script defer src="./scripts/scroll-animations.js"></script>
 </body>
 </html>
