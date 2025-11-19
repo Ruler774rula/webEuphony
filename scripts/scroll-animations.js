@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const restoreBehavior = document.documentElement.style.scrollBehavior;
     document.documentElement.style.scrollBehavior = 'auto';
-    window.scrollTo({ top: Math.max(0, document.documentElement.scrollHeight), behavior: 'auto' });
+    window.scrollTo({ top: 0, behavior: 'auto' });
     document.documentElement.style.scrollBehavior = restoreBehavior || '';
     const tlc = gsap.timeline();
     tlc.to(document.body, { opacity: 1, duration: 0.35, ease: 'power2.out' })
@@ -416,7 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
       });
-    }, { rootMargin: '600px 0px 600px 0px', threshold: 0 });
+    }, { rootMargin: '800px 0px 800px 0px', threshold: 0 });
     directManaged.forEach((img) => ioD.observe(img));
   } else {
     directManaged.forEach((img) => enqueueDirect(img));
@@ -438,11 +438,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
   prepareImgs([...collageTop, ...collageBot]);
-  const preloadSrc = (src) => new Promise((resolve) => {
+  const preloadSrc = (src, priority = 'low') => new Promise((resolve) => {
     const pre = new Image();
     pre.decoding = 'async';
     pre.loading = 'eager';
-    pre.setAttribute('fetchpriority', 'low');
+    pre.setAttribute('fetchpriority', priority);
     pre.src = src;
     const done = () => resolve();
     if (pre.decode) {
@@ -461,8 +461,27 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   const runCollageSequence = async () => {
     const all = [...collageTop, ...collageBot].filter(Boolean);
-    all.sort(() => Math.random() - 0.5);
-    const concurrency = Math.min(3, all.length);
+    let concurrency = Math.min(3, all.length);
+    const conn = navigator.connection;
+    if (conn) {
+      const t = conn.effectiveType || '4g';
+      const dl = typeof conn.downlink === 'number' ? conn.downlink : 0;
+      if (t === '4g') {
+        concurrency = Math.min(dl >= 15 ? 6 : 5, all.length);
+      } else if (t === '3g') {
+        concurrency = Math.min(4, all.length);
+      } else {
+        concurrency = Math.min(2, all.length);
+      }
+    }
+    const priorityCount = Math.min(6, all.length);
+    for (let i = 0; i < priorityCount; i++) {
+      const img = all[i];
+      const src = img && img.dataset ? img.dataset.src : null;
+      if (src) {
+        await preloadSrc(src, 'high');
+      }
+    }
     let index = 0;
     const worker = async () => {
       while (index < all.length) {
@@ -566,7 +585,7 @@ document.addEventListener('DOMContentLoaded', () => {
             started = false;
           }
         });
-      }, { rootMargin: '400px 0px 400px 0px', threshold: 0 });
+      }, { rootMargin: '1000px 0px 1000px 0px', threshold: 0 });
       io2.observe(collageWrap);
     } else {
       runCollageSequence();
