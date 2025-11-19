@@ -967,8 +967,9 @@ form {
 /* Menú lateral */
 .menu-toggle {
   position: fixed;
-  top: clamp(16px, 3vh, 24px);
-  left: clamp(20px, 5.2vw, 46px);
+  top: calc((var(--nav-h, 72px) - 40px)/2);
+  height: 40px;
+  left: clamp(32px, 4vw, 52px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1078,8 +1079,6 @@ form {
 /* Forzar que el botón de menú permanezca fijo y por encima del overlay */
 .navbar .menu-toggle {
   position: fixed;
-  top: clamp(16px, 3vh, 24px);
-  left: clamp(20px, 5.2vw, 46px);
   z-index: 1305;
 }
 @media (prefers-reduced-motion: reduce) {
