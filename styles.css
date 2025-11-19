@@ -612,7 +612,7 @@ form {
 
 @media (max-width: 480px) {
   .contact-toggle {
-    width: 120px;
+    width: auto;
     height: 40px;
     font-size: 1rem;
   }
@@ -942,7 +942,9 @@ form {
   .row-bot { height: 46%; }
   .text-content {
     min-height: 14vh;
+    margin-top: clamp(16px, 3vh, 28px);
     margin-bottom: clamp(24px, 5vh, 40px);
+    justify-content: flex-start;
   }
   .text-content h2,
   .text-content p {
@@ -953,11 +955,11 @@ form {
   }
   .text-content h2 {
     font-size: clamp(22px, 5vw, 28px);
-    line-height: 1.25;
+    line-height: 1.2;
   }
   .text-content p {
     font-size: clamp(15px, 3.2vw, 17px);
-    line-height: 1.85;
+    line-height: 1.6;
   }
   .separator {
     margin: 8px auto 16px;
@@ -969,7 +971,7 @@ form {
   position: fixed;
   top: calc((var(--nav-h, 72px) - 40px)/2);
   height: 40px;
-  left: clamp(32px, 4vw, 52px);
+  left: 46px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1069,10 +1071,10 @@ form {
     padding: 0 20px;
   }
   .menu-toggle {
-    left: clamp(12px, 3.6vw, 20px);
+    left: clamp(24px, 3vw, 44px);
   }
   .contact-toggle {
-    right: clamp(12px, 3.6vw, 20px);
+    right: clamp(24px, 3vw, 44px);
   }
 }
 
