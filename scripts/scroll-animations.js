@@ -435,7 +435,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (src && !img.dataset.src) {
         img.dataset.src = src;
       }
-      if (isSmall) {
+      if (isAndroidChrome) {
+        img.setAttribute('loading', 'eager');
+        img.setAttribute('decoding', 'async');
+        img.setAttribute('fetchpriority', 'high');
+        if (!img.getAttribute('src') && img.dataset.src) img.src = img.dataset.src;
+        img.style.display = '';
+        img.dataset.loaded = (img.complete && img.naturalWidth > 0) ? 'true' : 'false';
+      } else if (isSmall) {
         if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
         img.setAttribute('decoding', 'async');
         img.setAttribute('fetchpriority', 'low');
@@ -475,6 +482,18 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   const runCollageSequence = async () => {
     const all = [...collageTop, ...collageBot].filter(Boolean);
+    if (isAndroidChrome) {
+      for (const img of all) {
+        if (!img) continue;
+        const src = img.dataset.src || img.getAttribute('src');
+        if (src && !img.getAttribute('src')) img.src = src;
+        img.style.display = '';
+        try { if (img.decode) { await img.decode(); } else { await waitForLoad(img); } } catch {}
+        gsap.fromTo(img, { opacity: 0, filter: 'blur(16px)' }, { opacity: 1, filter: 'blur(0px)', duration: 0.8, ease: 'power2.out' });
+        img.dataset.loaded = 'true';
+      }
+      return;
+    }
     let concurrency = Math.min(3, all.length);
     const conn = navigator.connection;
     if (conn) {
@@ -584,24 +603,26 @@ document.addEventListener('DOMContentLoaded', () => {
             started = true;
             runCollageSequence();
           } else if (!e.isIntersecting && started) {
-            const allImgs = [...collageTop, ...collageBot].filter(Boolean);
-            allImgs.sort(() => Math.random() - 0.5);
-            const count = Math.ceil(allImgs.length * 0.5);
-            for (let i = 0; i < count; i++) {
-              const img = allImgs[i];
-              if (!img) continue;
-              gsap.to(img, { opacity: 0, filter: 'blur(16px)', duration: 0.4, ease: 'power2.in', onComplete: () => {
-                img.removeAttribute('src');
-                img.dataset.loaded = 'false';
-                img.style.display = 'none';
-              }});
+            if (!isAndroidChrome) {
+              const allImgs = [...collageTop, ...collageBot].filter(Boolean);
+              allImgs.sort(() => Math.random() - 0.5);
+              const count = Math.ceil(allImgs.length * 0.5);
+              for (let i = 0; i < count; i++) {
+                const img = allImgs[i];
+                if (!img) continue;
+                gsap.to(img, { opacity: 0, filter: 'blur(16px)', duration: 0.4, ease: 'power2.in', onComplete: () => {
+                  img.removeAttribute('src');
+                  img.dataset.loaded = 'false';
+                  img.style.display = 'none';
+                }});
+              }
+              started = false;
             }
-            started = false;
           }
         });
       }, { rootMargin: '1000px 0px 1000px 0px', threshold: 0 });
       io2.observe(collageWrap);
-      if (isSmall && !started) { started = true; runCollageSequence(); }
+      if (isAndroidChrome && !started) { started = true; runCollageSequence(); }
     } else {
       runCollageSequence();
     }
