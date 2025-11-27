@@ -250,31 +250,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const parallaxImgs = Array.from(document.querySelectorAll('.image-container .focus-frame > img'));
-  const updateParallax = () => {
-    const vh = window.innerHeight || 0;
-    parallaxImgs.forEach((img) => {
-      const container = img.closest('.image-container');
-      if (!container) return;
-      const rect = container.getBoundingClientRect();
-      const total = rect.height + vh;
-      if (total <= 0) return;
-      const t = (rect.top + rect.height) / total;
-      const y = -35 + (70 * t);
-      img.style.setProperty('--py', y + '%');
+  // Parallax con GSAP solo para las 3 primeras imágenes principales
+  const mainGsapImgs = Array.from(document.querySelectorAll('.image-container .focus-frame > img')).slice(0, 3);
+  mainGsapImgs.forEach((img) => {
+    const container = img.closest('.image-container');
+    if (!container) return;
+    const startY = isSmall ? 8 : 12;
+    const endY = isSmall ? -16 : -24;
+    gsap.fromTo(img, { yPercent: startY }, {
+      yPercent: endY,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: container,
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: true
+      }
     });
-  };
-  let rafId = null;
-  const onScrollParallax = () => {
-    if (rafId !== null) return;
-    rafId = requestAnimationFrame(() => {
-      rafId = null;
-      updateParallax();
-    });
-  };
-  window.addEventListener('scroll', onScrollParallax, { passive: true });
-  window.addEventListener('resize', onScrollParallax);
-  updateParallax();
+  });
+
+  const collageImgs = document.querySelectorAll('.focus-frame .collage-item img');
   // const placeholderGif = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
   const markLoaded = (img) => {
     if (!img) return;
@@ -284,9 +279,10 @@ document.addEventListener('DOMContentLoaded', () => {
       img.addEventListener('load', () => { img.dataset.loaded = 'true'; }, { once: true });
     }
   };
-  parallaxImgs.forEach(markLoaded);
+  // Asegurar que las imágenes principales marcan loaded para revelar la etiqueta
+  const mainImgsLoaded = Array.from(document.querySelectorAll('.image-container .focus-frame > img'));
+  mainImgsLoaded.forEach(markLoaded);
   const collageRows = document.querySelectorAll('.collage-row');
-  const collageImgs = document.querySelectorAll('.focus-frame .collage-item img');
   collageImgs.forEach(markLoaded);
   const collageWrap = document.querySelector('.focus-frame .collage-track');
   if (collageWrap) {

@@ -60,6 +60,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'TheSeasonsBold';
+  src: url('./public/The-Seasons-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Variables CSS */
 :root {
   --primary-color: #d4af37;
@@ -715,9 +723,6 @@ form {
     align-items: flex-end; /* marquito pegado abajo */
     justify-content: center;
     background-color: #000; /* continuidad con el fondo */
-    content-visibility: auto;
-    contain-intrinsic-size: 100vh;
-    contain: layout paint;
 }
 
 /* Marco de enfoque (máscara) */
@@ -758,13 +763,14 @@ form {
     height: 140%;
     object-fit: cover;
     display: block;
-    transform: translateY(var(--py, -30%));
+    transform: translateY(var(--py, 12%));
     will-change: transform;
 }
 
 .image-container .focus-frame > img {
   opacity: 1;
   filter: none;
+  transform: none;
   will-change: transform;
 }
 
@@ -805,7 +811,7 @@ form {
   left: 0;
   display: flex;
   align-items: center;
-  gap: clamp(16px, 2.4vw, 24px);
+  gap: clamp(28px, 4.8vw, 90px);
   width: max-content;
   animation-name: collagePan;
   animation-timing-function: linear;
@@ -814,8 +820,8 @@ form {
   will-change: transform;
   content-visibility: auto;
 }
-.row-top { top: 0; height: 58%; animation-duration: 140s; z-index: 3; }
-.row-bot { bottom: 0; height: 48%; animation-duration: 160s; }
+.row-top { top: 0; height: 58%; animation-duration: 180s; z-index: 3; margin-left: -10%; }
+.row-bot { bottom: 0; height: 48%; animation-duration: 220s; }
 .collage-item {
   flex: 0 0 auto;
   border-radius: 16px;
@@ -829,11 +835,13 @@ form {
   height: 140%;
   object-fit: cover;
   display: block;
-  transform: translateY(-20%);
-  opacity: 0;
-  filter: blur(16px);
-  will-change: transform, opacity, filter;
+  transform: none;
+  opacity: 1;
+  filter: none;
+  transition: opacity 0.4s ease, filter 0.4s ease;
+  will-change: opacity, filter;
 }
+.collage-item img[data-loaded="true"] { opacity: 1; filter: none; }
 .collage-item.w-s { width: clamp(140px, 12vw, 220px); }
 .collage-item.w-m { width: clamp(240px, 22vw, 380px); }
 .collage-item.w-l { width: clamp(360px, 34vw, 620px); }
@@ -849,13 +857,13 @@ form {
 }
 
 @media (max-width: 1200px) {
-  .collage-row { gap: clamp(10px, 1.8vw, 16px); }
+  .collage-row { gap: clamp(20px, 3.6vw, 60px); }
   .collage-item.w-m { width: clamp(220px, 20vw, 320px); }
   .collage-item.w-l { width: clamp(320px, 30vw, 520px); }
 }
 
 @media (max-width: 768px) {
-  .collage-row { gap: clamp(8px, 1.6vw, 14px); }
+  .collage-row { gap: clamp(16px, 3.2vw, 44px); }
   .collage-item.w-m { width: clamp(200px, 18vw, 280px); }
   .collage-item.w-l { width: clamp(280px, 26vw, 460px); }
 }
@@ -886,7 +894,7 @@ form {
     opacity: 1;
     transform: none;
     filter: none;
-    font-family: 'MagnoliaScript', 'NEXTART', sans-serif;
+    font-family: 'TheSeasonsBold', 'NEXTART', sans-serif;
 }
 
 .text-content h2 {
@@ -936,7 +944,7 @@ form {
   }
   .collage-item img {
     height: 120%;
-    transform: translateY(-10%);
+    transform: none;
   }
   .row-top { height: 54%; }
   .row-bot { height: 46%; }
