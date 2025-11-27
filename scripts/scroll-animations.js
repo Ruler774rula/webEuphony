@@ -245,399 +245,61 @@ document.addEventListener('DOMContentLoaded', () => {
   const separators = document.querySelectorAll('.separator');
   if (!isSmall) {
     separators.forEach((sep) => {
-      gsap.to(sep, {
-        opacity: 1,
-        filter: 'blur(0px)',
-        duration: 0.6,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: sep,
-          start: 'top 85%',
-          end: 'top 75%',
-          toggleActions: 'play none none reverse'
-        }
-      });
+      sep.style.opacity = '1';
+      sep.style.filter = 'none';
     });
   }
 
-  const setupParallax = (nodeList) => {
-    nodeList.forEach((img) => {
+  const parallaxImgs = Array.from(document.querySelectorAll('.image-container .focus-frame > img'));
+  const updateParallax = () => {
+    const vh = window.innerHeight || 0;
+    parallaxImgs.forEach((img) => {
       const container = img.closest('.image-container');
       if (!container) return;
-      gsap.fromTo(img, { yPercent: -35 }, {
-        yPercent: 35,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: container,
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: true
-        }
-      });
+      const rect = container.getBoundingClientRect();
+      const total = rect.height + vh;
+      if (total <= 0) return;
+      const t = (rect.top + rect.height) / total;
+      const y = -35 + (70 * t);
+      img.style.setProperty('--py', y + '%');
     });
   };
-
-  if (!isSmall) {
-    setupParallax(document.querySelectorAll('.image-container .focus-frame > img'));
-    setupParallax(document.querySelectorAll('.focus-frame .collage-item img'));
-  }
+  let rafId = null;
+  const onScrollParallax = () => {
+    if (rafId !== null) return;
+    rafId = requestAnimationFrame(() => {
+      rafId = null;
+      updateParallax();
+    });
+  };
+  window.addEventListener('scroll', onScrollParallax, { passive: true });
+  window.addEventListener('resize', onScrollParallax);
+  updateParallax();
   // const placeholderGif = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
-  const directManaged = Array.from(document.querySelectorAll('.image-container .focus-frame > img'));
-  const directUnloadTimers = new Map();
-  const prepareDirect = (imgs) => {
-    imgs.forEach((img) => {
-      if (!img.dataset.src) img.dataset.src = img.getAttribute('src');
-      if (img.dataset.src) {
-        if (!isSmall) {
-          img.removeAttribute('src');
-          img.style.display = 'none';
-        } else {
-          img.src = img.dataset.src;
-        }
-      }
-      img.setAttribute('decoding', 'async');
-      img.setAttribute('fetchpriority', 'low');
-      img.setAttribute('loading', 'lazy');
-      if (isSmall && img.complete && img.naturalWidth > 0) {
-        img.dataset.loaded = 'true';
-      } else {
-        img.dataset.loaded = 'false';
-      }
-      img.dataset.loading = 'false';
-      img.style.visibility = isSmall ? 'visible' : 'hidden';
-    });
-  };
-  prepareDirect(directManaged);
-  const preloadImg = (src) => new Promise((resolve) => {
-    const pre = new Image();
-    pre.decoding = 'async';
-    pre.loading = 'eager';
-    pre.setAttribute('fetchpriority', 'high');
-    pre.src = src;
-    const done = () => resolve();
-    if (pre.decode) {
-      pre.decode().then(done).catch(() => { pre.onload = done; });
-    } else {
-      pre.onload = done;
-    }
-    pre.onerror = done;
-  });
-  const directQueue = [];
-  let directLoading = false;
-  const processDirectQueue = async () => {
-    if (directLoading || directQueue.length === 0) return;
-    directLoading = true;
-    const img = directQueue.shift();
-    if (!img || img.dataset.loading === 'true' || img.dataset.loaded === 'true') {
-      directLoading = false;
-      processDirectQueue();
-      return;
-    }
-    const src = img.dataset.src;
-    if (!src) {
-      directLoading = false;
-      processDirectQueue();
-      return;
-    }
-    img.dataset.loading = 'true';
-    await preloadImg(src);
-    img.src = src;
-    img.style.display = '';
-    img.style.visibility = 'visible';
-    gsap.fromTo(img, { opacity: 0, filter: 'blur(16px)' }, { opacity: 1, filter: 'blur(0px)', duration: 1.0, ease: 'power2.out' });
-    img.dataset.loaded = 'true';
-    img.dataset.loading = 'false';
-    directLoading = false;
-    processDirectQueue();
-  };
-  const enqueueDirect = (img) => {
-    if (!img || img.dataset.loaded === 'true' || img.dataset.loading === 'true') return;
-    directQueue.push(img);
-    processDirectQueue();
-  };
-  // Persistir y cargar siempre las primeras 3 imágenes principales
-  const directPersist = directManaged.slice(0, 3);
-  directPersist.forEach((img) => {
-    img.dataset.persist = 'true';
-    img.setAttribute('loading', 'eager');
-    img.setAttribute('fetchpriority', 'high');
-    enqueueDirect(img);
-  });
-  const forceLoadPersist = async (imgs) => {
-    for (const img of imgs) {
-      if (!img) continue;
-      let src = img.dataset.src || img.getAttribute('src');
-      if (!src) continue;
-      img.dataset.loading = 'true';
-      img.src = src;
-      img.style.display = '';
-      img.style.visibility = 'visible';
-      try { if (img.decode) { await img.decode(); } } catch {}
-      if (!(img.complete && img.naturalWidth > 0)) {
-        const bust = src + (src.includes('?') ? '&' : '?') + 'v=' + Date.now();
-        src = bust;
-        img.src = bust;
-        try { if (img.decode) { await img.decode(); } } catch {}
-      }
-      gsap.to(img, { opacity: 1, filter: 'blur(0px)', duration: 0.8, ease: 'power2.out' });
-      img.dataset.loaded = 'true';
-      img.dataset.loading = 'false';
-    }
-  };
-  forceLoadPersist(directPersist);
-  const unloadDirect = (img) => {
-    if (!img || img.dataset.loaded !== 'true') return;
-    if (img.dataset.persist === 'true') return;
-    if (isSmall) return;
-    gsap.to(img, { opacity: 0, filter: 'blur(16px)', duration: 0.4, ease: 'power2.in', onComplete: () => {
-      img.removeAttribute('src');
-      img.dataset.loaded = 'false';
-      img.style.display = 'none';
-      img.style.visibility = 'hidden';
-    }});
-  };
-  if ('IntersectionObserver' in window) {
-    const ioD = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        const img = e.target;
-        if (e.isIntersecting) {
-          const t = directUnloadTimers.get(img);
-          if (t) { clearTimeout(t); directUnloadTimers.delete(img); }
-          enqueueDirect(img);
-        } else {
-          if (img.dataset.persist === 'true') {
-            enqueueDirect(img);
-          } else {
-            const h = setTimeout(() => {
-              const rect = img.getBoundingClientRect();
-              const margin = 300;
-              const offscreen = (rect.bottom < -margin) || (rect.top > (window.innerHeight + margin));
-              if (offscreen) {
-                unloadDirect(img);
-              } else {
-                enqueueDirect(img);
-              }
-            }, 1500);
-            directUnloadTimers.set(img, h);
-          }
-        }
-      });
-    }, { rootMargin: '800px 0px 800px 0px', threshold: 0 });
-    directManaged.forEach((img) => ioD.observe(img));
-  } else {
-    directManaged.forEach((img) => enqueueDirect(img));
-  }
-  const collageTop = Array.from(document.querySelectorAll('.collage-row.row-top .collage-item img'));
-  const collageBot = Array.from(document.querySelectorAll('.collage-row.row-bot .collage-item img'));
-  const prepareImgs = (imgs) => {
-    imgs.forEach((img) => {
-      const src = img.getAttribute('src');
-      if (src && !img.dataset.src) {
-        img.dataset.src = src;
-      }
-      if (isAndroidChrome) {
-        img.setAttribute('loading', 'eager');
-        img.setAttribute('decoding', 'async');
-        img.setAttribute('fetchpriority', 'high');
-        if (!img.getAttribute('src') && img.dataset.src) img.src = img.dataset.src;
-        img.style.display = '';
-        img.dataset.loaded = (img.complete && img.naturalWidth > 0) ? 'true' : 'false';
-      } else if (isSmall) {
-        if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
-        img.setAttribute('decoding', 'async');
-        img.setAttribute('fetchpriority', 'low');
-        img.style.display = '';
-        img.dataset.loaded = (img.complete && img.naturalWidth > 0) ? 'true' : 'false';
-      } else {
-        img.removeAttribute('src');
-        img.setAttribute('decoding', 'async');
-        img.setAttribute('fetchpriority', 'low');
-        img.setAttribute('loading', 'lazy');
-        img.style.display = 'none';
-        img.dataset.loaded = 'false';
-      }
-    });
-  };
-  prepareImgs([...collageTop, ...collageBot]);
-  const preloadSrc = (src, priority = 'low') => new Promise((resolve) => {
-    const pre = new Image();
-    pre.decoding = 'async';
-    pre.loading = 'eager';
-    pre.setAttribute('fetchpriority', priority);
-    pre.src = src;
-    const done = () => resolve();
-    if (pre.decode) {
-      pre.decode().then(done).catch(() => { pre.onload = done; });
-    } else {
-      pre.onload = done;
-    }
-    pre.onerror = done;
-  });
-  const waitForLoad = (img) => new Promise((resolve, reject) => {
-    if (img.complete && img.naturalWidth > 0) { resolve(); return; }
-    const onload = () => resolve();
-    const onerror = () => reject();
-    img.addEventListener('load', onload, { once: true });
-    img.addEventListener('error', onerror, { once: true });
-  });
-  const runCollageSequence = async () => {
-    const all = [...collageTop, ...collageBot].filter(Boolean);
-    if (isAndroidChrome) {
-      for (const img of all) {
-        if (!img) continue;
-        const src = img.dataset.src || img.getAttribute('src');
-        if (src && !img.getAttribute('src')) img.src = src;
-        img.style.display = '';
-        try { if (img.decode) { await img.decode(); } else { await waitForLoad(img); } } catch {}
-        gsap.fromTo(img, { opacity: 0, filter: 'blur(16px)' }, { opacity: 1, filter: 'blur(0px)', duration: 0.8, ease: 'power2.out' });
-        img.dataset.loaded = 'true';
-      }
-      return;
-    }
-    let concurrency = Math.min(3, all.length);
-    const conn = navigator.connection;
-    if (conn) {
-      const t = conn.effectiveType || '4g';
-      const dl = typeof conn.downlink === 'number' ? conn.downlink : 0;
-      if (t === '4g') {
-        concurrency = Math.min(dl >= 15 ? 6 : 5, all.length);
-      } else if (t === '3g') {
-        concurrency = Math.min(4, all.length);
-      } else {
-        concurrency = Math.min(2, all.length);
-      }
-    }
-    const priorityCount = Math.min(6, all.length);
-    for (let i = 0; i < priorityCount; i++) {
-      const img = all[i];
-      const src = img && img.dataset ? img.dataset.src : null;
-      if (src) {
-        await preloadSrc(src, 'high');
-      }
-    }
-    let index = 0;
-    const worker = async () => {
-      while (index < all.length) {
-        const img = all[index++];
-        if (!img || img.dataset.loaded === 'true') continue;
-        const src = img.dataset.src;
-        if (!src) continue;
-        img.style.visibility = 'hidden';
-        let ok = false;
-        for (let attempt = 0; attempt < 3 && !ok; attempt++) {
-          await preloadSrc(src);
-          img.src = src;
-          img.style.display = '';
-          try {
-            if (img.decode) { await img.decode(); } else { await waitForLoad(img); }
-          } catch {}
-          if (img.complete && img.naturalWidth > 0) { ok = true; break; }
-          img.removeAttribute('src');
-          img.style.display = 'none';
-          await new Promise((r) => setTimeout(r, 250));
-        }
-        if (!ok) {
-          const bust = src + (src.includes('?') ? '&' : '?') + 'v=' + Date.now();
-          await preloadSrc(bust);
-          img.src = bust;
-          img.style.display = '';
-          try { if (img.decode) { await img.decode(); } else { await waitForLoad(img); } } catch {}
-          if (!(img.complete && img.naturalWidth > 0)) { continue; }
-        }
-        if (!ok) { continue; }
-        img.style.visibility = 'visible';
-        img.style.display = '';
-        gsap.fromTo(img, { opacity: 0, filter: 'blur(16px)' }, { opacity: 1, filter: 'blur(0px)', duration: 1.1, ease: 'power2.out', onComplete: () => { img.dataset.loaded = 'true'; } });
-      }
-    };
-    const tasks = [];
-    for (let i = 0; i < concurrency; i++) tasks.push(worker());
-    await Promise.all(tasks);
-  };
-  const reloadCollageImage = async (img) => {
+  const markLoaded = (img) => {
     if (!img) return;
-    if (img.dataset.reloading === 'true') return;
-    const src = img.dataset.src || img.getAttribute('src');
-    if (!src) return;
-    img.dataset.reloading = 'true';
-    await new Promise((resolve) => {
-      gsap.to(img, { opacity: 0, filter: 'blur(16px)', duration: 0.25, ease: 'power2.in', onComplete: resolve });
-    });
-    img.dataset.loaded = 'false';
-    img.style.visibility = 'hidden';
-    img.removeAttribute('src');
-    img.style.display = 'none';
-    let ok = false;
-    for (let attempt = 0; attempt < 3 && !ok; attempt++) {
-      await preloadSrc(src);
-      img.src = src;
-      img.style.display = '';
-      try {
-        if (img.decode) { await img.decode(); } else { await waitForLoad(img); }
-      } catch {}
-      if (img.complete && img.naturalWidth > 0) { ok = true; break; }
-      img.removeAttribute('src');
-      img.style.display = 'none';
-      await new Promise((r) => setTimeout(r, 250));
+    if (img.complete && img.naturalWidth > 0) {
+      img.dataset.loaded = 'true';
+    } else {
+      img.addEventListener('load', () => { img.dataset.loaded = 'true'; }, { once: true });
     }
-    if (!ok) {
-      const bust = src + (src.includes('?') ? '&' : '?') + 'v=' + Date.now();
-      await preloadSrc(bust);
-      img.src = bust;
-      img.style.display = '';
-      try { if (img.decode) { await img.decode(); } else { await waitForLoad(img); } } catch {}
-      if (!(img.complete && img.naturalWidth > 0)) { img.dataset.reloading = 'false'; return; }
-      ok = true;
-    }
-    if (!ok) { img.dataset.reloading = 'false'; return; }
-    img.style.visibility = 'visible';
-    gsap.fromTo(img, { opacity: 0, filter: 'blur(16px)' }, { opacity: 1, filter: 'blur(0px)', duration: 1.0, ease: 'power2.out', onComplete: () => { img.dataset.loaded = 'true'; img.dataset.reloading = 'false'; } });
   };
+  parallaxImgs.forEach(markLoaded);
+  const collageRows = document.querySelectorAll('.collage-row');
+  const collageImgs = document.querySelectorAll('.focus-frame .collage-item img');
+  collageImgs.forEach(markLoaded);
   const collageWrap = document.querySelector('.focus-frame .collage-track');
   if (collageWrap) {
     if ('IntersectionObserver' in window) {
-      let started = false;
       const io2 = new IntersectionObserver((entries) => {
         entries.forEach((e) => {
-          if (e.isIntersecting && !started) {
-            started = true;
-            runCollageSequence();
-          } else if (!e.isIntersecting && started) {
-            if (!isAndroidChrome) {
-              const allImgs = [...collageTop, ...collageBot].filter(Boolean);
-              allImgs.sort(() => Math.random() - 0.5);
-              const count = Math.ceil(allImgs.length * 0.5);
-              for (let i = 0; i < count; i++) {
-                const img = allImgs[i];
-                if (!img) continue;
-                gsap.to(img, { opacity: 0, filter: 'blur(16px)', duration: 0.4, ease: 'power2.in', onComplete: () => {
-                  img.removeAttribute('src');
-                  img.dataset.loaded = 'false';
-                  img.style.display = 'none';
-                }});
-              }
-              started = false;
-            }
-          }
+          if (!e.isIntersecting) return;
+          collageImgs.forEach((img) => { if (img.complete && img.naturalWidth > 0) img.dataset.loaded = 'true'; });
         });
-      }, { rootMargin: '1000px 0px 1000px 0px', threshold: 0 });
+      }, { rootMargin: '500px 0px 500px 0px', threshold: 0 });
       io2.observe(collageWrap);
-      if (isAndroidChrome && !started) { started = true; runCollageSequence(); }
-    } else {
-      runCollageSequence();
     }
   }
-  const collageItems = document.querySelectorAll('.focus-frame .collage-item');
-  if (collageItems.length) {
-    collageItems.forEach((item) => {
-      item.addEventListener('mouseenter', () => {
-        const img = item.querySelector('img');
-        if (!img) return;
-        reloadCollageImage(img);
-      });
-    });
-  }
-  const collageRows = document.querySelectorAll('.collage-row');
   if (collageRows.length) {
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {
