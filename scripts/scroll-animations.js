@@ -168,6 +168,26 @@ document.addEventListener('DOMContentLoaded', () => {
   const twoPanels = document.getElementById('twoPanels');
 
   if (twoPanelsSection && panelBodas && panelEventos) {
+    const navEl = document.querySelector('.navbar');
+    const getNavH = () => (navEl ? navEl.offsetHeight : 0);
+    let sectionTopAbs = 0;
+    const measureSectionTop = () => {
+      sectionTopAbs = twoPanelsSection.getBoundingClientRect().top + window.pageYOffset;
+    };
+    measureSectionTop();
+    window.addEventListener('resize', measureSectionTop, { passive: true });
+
+    function collapsePanels() {
+      twoPanelsSection.classList.remove('panel-bodas-expanded', 'panel-eventos-expanded');
+      twoPanelsSection.classList.remove('is-hover-bodas', 'is-hover-eventos');
+      panelTextBodas && panelTextBodas.classList.remove('visible');
+      panelTextEventos && panelTextEventos.classList.remove('visible');
+      panelTextBodas && panelTextBodas.setAttribute('aria-hidden', 'true');
+      panelTextEventos && panelTextEventos.setAttribute('aria-hidden', 'true');
+      panelBodas && panelBodas.setAttribute('aria-expanded', 'false');
+      panelEventos && panelEventos.setAttribute('aria-expanded', 'false');
+    }
+
     function setExpanded(panel) {
       twoPanelsSection.classList.remove('panel-bodas-expanded', 'panel-eventos-expanded');
       panelTextBodas && panelTextBodas.classList.remove('visible');
@@ -194,13 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const isBodas = clickedPanel === panelBodas;
       const alreadyExpanded = twoPanelsSection.classList.contains(isBodas ? 'panel-bodas-expanded' : 'panel-eventos-expanded');
       if (alreadyExpanded) {
-        twoPanelsSection.classList.remove('panel-bodas-expanded', 'panel-eventos-expanded');
-        panelTextBodas && panelTextBodas.classList.remove('visible');
-        panelTextEventos && panelTextEventos.classList.remove('visible');
-        panelTextBodas && panelTextBodas.setAttribute('aria-hidden', 'true');
-        panelTextEventos && panelTextEventos.setAttribute('aria-hidden', 'true');
-        panelBodas && panelBodas.setAttribute('aria-expanded', 'false');
-        panelEventos && panelEventos.setAttribute('aria-expanded', 'false');
+        collapsePanels();
         return;
       }
       setExpanded(clickedPanel);
@@ -272,6 +286,27 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
+    /* Al hacer scroll hacia arriba por encima de la sección expandida, colapsar automáticamente */
+    let lastScrollY = window.scrollY;
+    let scrollRaf = 0;
+    const onScroll = () => {
+      if (scrollRaf) return;
+      scrollRaf = window.requestAnimationFrame(() => {
+        scrollRaf = 0;
+        const y = window.scrollY;
+        const scrollingUp = y < lastScrollY;
+        lastScrollY = y;
+        const isExpanded = twoPanelsSection.classList.contains('panel-bodas-expanded')
+          || twoPanelsSection.classList.contains('panel-eventos-expanded');
+        if (!isExpanded || !scrollingUp) return;
+        const navH = getNavH();
+        if (y < (sectionTopAbs - navH - 12)) {
+          collapsePanels();
+        }
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+
     /* Revelar texto al hacer scroll cuando el panel está expandido */
     if (panelTextBodas && panelTextEventos) {
       [panelTextBodas, panelTextEventos].forEach((el) => {
@@ -299,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
         start: 'top top',
         end: '+=' + fadeSpan,
         scrub: true,
-        pin: !isSmall,
+        pin: false,
         ease: 'power1.out',
         onLeave: () => {
           const srcEl = video ? video.querySelector('source') : null;

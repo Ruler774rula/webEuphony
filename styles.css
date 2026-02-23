@@ -728,7 +728,7 @@ form {
   width: 100%;
   position: relative;
   background-color: #000;
-  min-height: 120vh;
+  min-height: auto;
 }
 
 .two-panels-wrap {
@@ -895,6 +895,11 @@ form {
   left: calc((100% + var(--seam-top) + (var(--seam-gap) / 2)) / 2);
 }
 
+.two-panels-section.panel-bodas-expanded .panel-bodas .panel-frame .frame-label,
+.two-panels-section.panel-eventos-expanded .panel-eventos .panel-frame .frame-label {
+  left: 50%;
+}
+
 /* Fallback cuando no existe soporte de clip-path */
 @supports not (clip-path: polygon(0 0)) {
   .two-panels {
@@ -917,6 +922,9 @@ form {
   .panel-text {
     transition-duration: 0.2s;
   }
+  .two-panels .panel-frame > img {
+    transition-duration: 0.2s;
+  }
 }
 
 /* Dispositivos táctiles: sin “hover”; se mantiene el divisor estático */
@@ -931,8 +939,14 @@ form {
   width: calc(100vw - clamp(48px, 6vw, 88px));
   margin: 0 auto;
   position: relative;
-  margin-top: clamp(32px, 6vh, 64px);
-  padding-bottom: clamp(24px, 4vh, 48px);
+  margin-top: 12px;
+  padding-bottom: 12px;
+}
+
+.two-panels-section.panel-bodas-expanded .panel-text-wrap,
+.two-panels-section.panel-eventos-expanded .panel-text-wrap {
+  margin-top: clamp(18px, 4vh, 40px);
+  padding-bottom: clamp(18px, 4vh, 40px);
 }
 
 .panel-text {
@@ -963,11 +977,11 @@ form {
 .image-container {
     width: 100%;
     position: relative;
-    height: 120vh;
     display: flex;
-    align-items: flex-end; /* marquito pegado abajo */
+    align-items: center;
     justify-content: center;
     background-color: #000; /* continuidad con el fondo */
+    padding-block: clamp(12px, 2.5vh, 20px);
 }
 
 /* Marco de enfoque (máscara) */
@@ -1017,6 +1031,48 @@ form {
   filter: none;
   transform: none;
   will-change: transform;
+}
+
+.two-panels .panel-frame > img.panel-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 140%;
+  object-fit: cover;
+  display: block;
+  transform: translateY(var(--py, 12%));
+  opacity: 0;
+  filter: blur(10px) saturate(0.95);
+  will-change: transform, opacity, filter;
+  transition: opacity 650ms ease-in-out, filter 650ms ease-in-out;
+}
+
+.two-panels .panel-frame > img.panel-img-primary[data-loaded="true"] {
+  opacity: 1;
+  filter: none;
+}
+
+.two-panels .panel-frame > img.panel-img-alt[data-loaded="true"] {
+  opacity: 0;
+  filter: none;
+}
+
+.two-panels-section.panel-bodas-expanded .panel-bodas .panel-frame > img.panel-img-primary {
+  opacity: 0;
+  filter: blur(10px) saturate(0.95);
+}
+.two-panels-section.panel-bodas-expanded .panel-bodas .panel-frame > img.panel-img-alt[data-loaded="true"] {
+  opacity: 1;
+  filter: none;
+}
+
+.two-panels-section.panel-eventos-expanded .panel-eventos .panel-frame > img.panel-img-primary {
+  opacity: 0;
+  filter: blur(10px) saturate(0.95);
+}
+.two-panels-section.panel-eventos-expanded .panel-eventos .panel-frame > img.panel-img-alt[data-loaded="true"] {
+  opacity: 1;
+  filter: none;
 }
 
 .focus-frame .frame-label {

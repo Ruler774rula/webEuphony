@@ -6,6 +6,7 @@
   <title>Euphony - Bodas & Eventos</title>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <link rel="preload" as="image" href="imagenes/pexels-bertellifotografia-29486087_resultado.webp" fetchpriority="high">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <link rel="stylesheet" href="./styles.css">
 </head>
@@ -94,13 +95,15 @@
             <div class="two-panels" id="twoPanels">
               <div class="panel panel-bodas" id="panelBodas" data-panel="bodas" role="button" tabindex="0" aria-expanded="false" aria-label="Ver Bodas">
                 <div class="focus-frame panel-frame">
-                  <img src="imagenes\pexels-mm-fotovideo-22469727-30789033_resultado.webp" alt="Bodas">
+                  <img class="panel-img panel-img-primary" src="imagenes/pexels-mm-fotovideo-22469727-30789033_resultado.webp" alt="Bodas" decoding="async" fetchpriority="low" loading="eager">
+                  <img class="panel-img panel-img-alt" src="imagenes/pexels-marc-schulte-656598-2952834_resultado.webp" alt="" aria-hidden="true" decoding="async" loading="lazy">
                   <div class="frame-label inverse">Bodas</div>
                 </div>
               </div>
               <div class="panel panel-eventos" id="panelEventos" data-panel="eventos" role="button" tabindex="0" aria-expanded="false" aria-label="Ver Eventos">
                 <div class="focus-frame panel-frame">
-                  <img src="imagenes\pexels-bertellifotografia-29486087_resultado.webp" alt="Eventos">
+                  <img class="panel-img panel-img-primary" src="imagenes/pexels-bertellifotografia-29486087_resultado.webp" alt="Eventos" decoding="async" fetchpriority="high" loading="eager">
+                  <img class="panel-img panel-img-alt" src="imagenes/Low/pexels-gustavo-trotta-300282193-14470108_resultado.webp" alt="" aria-hidden="true" decoding="async" loading="lazy">
                   <div class="frame-label inverse">Eventos</div>
                 </div>
               </div>
