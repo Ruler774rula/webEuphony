@@ -44,8 +44,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   const allImgsInit = () => {
+    const panelImgs = Array.from(document.querySelectorAll('.two-panels .focus-frame > img'));
     const mainImgs = Array.from(document.querySelectorAll('.image-container .focus-frame > img'));
-    const firstThreeMain = mainImgs.slice(0, 3);
+    const firstThreeMain = panelImgs.length ? panelImgs : mainImgs.slice(0, 3);
     const imgs = document.querySelectorAll('img');
     imgs.forEach((img) => {
       if (!img.hasAttribute('decoding')) img.setAttribute('decoding', 'async');
@@ -144,17 +145,150 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', onScroll, { passive: true });
 
     discoverPrompt.addEventListener('click', () => {
-      const frame = document.querySelector('.image-container .focus-frame');
-      if (!frame) return;
+      const twoPanelsSection = document.querySelector('.two-panels-section');
+      const firstFrame = document.querySelector('.two-panels .focus-frame') || document.querySelector('.image-container .focus-frame');
+      const target = twoPanelsSection || (firstFrame ? firstFrame.closest('.image-container') : null);
+      if (!target) return;
       const nav = document.querySelector('.navbar');
       const navH = nav ? nav.offsetHeight : 0;
-      const rect = frame.getBoundingClientRect();
-      const frameTopAbs = rect.top + window.pageYOffset;
-      const frameH = rect.height;
+      const rect = target.getBoundingClientRect();
+      const topAbs = rect.top + window.pageYOffset;
       const vh = window.innerHeight;
-      const y = Math.max(0, frameTopAbs - ((vh - frameH) / 2) - (navH / 2));
+      const y = Math.max(0, topAbs - navH - 24);
       window.scrollTo({ top: y, behavior: 'smooth' });
     });
+  }
+
+  /* Paneles Bodas / Eventos: expansión al clic y scroll al texto */
+  const twoPanelsSection = document.querySelector('.two-panels-section');
+  const panelBodas = document.getElementById('panelBodas');
+  const panelEventos = document.getElementById('panelEventos');
+  const panelTextBodas = document.getElementById('panelTextBodas');
+  const panelTextEventos = document.getElementById('panelTextEventos');
+  const twoPanels = document.getElementById('twoPanels');
+
+  if (twoPanelsSection && panelBodas && panelEventos) {
+    function setExpanded(panel) {
+      twoPanelsSection.classList.remove('panel-bodas-expanded', 'panel-eventos-expanded');
+      panelTextBodas && panelTextBodas.classList.remove('visible');
+      panelTextEventos && panelTextEventos.classList.remove('visible');
+      panelTextBodas && panelTextBodas.setAttribute('aria-hidden', 'true');
+      panelTextEventos && panelTextEventos.setAttribute('aria-hidden', 'true');
+      panelBodas && panelBodas.setAttribute('aria-expanded', 'false');
+      panelEventos && panelEventos.setAttribute('aria-expanded', 'false');
+      if (!panel) return;
+      if (panel === panelBodas) {
+        twoPanelsSection.classList.add('panel-bodas-expanded');
+        panelBodas.setAttribute('aria-expanded', 'true');
+        panelTextBodas && panelTextBodas.classList.add('visible');
+        panelTextBodas && panelTextBodas.setAttribute('aria-hidden', 'false');
+      } else {
+        twoPanelsSection.classList.add('panel-eventos-expanded');
+        panelEventos.setAttribute('aria-expanded', 'true');
+        panelTextEventos && panelTextEventos.classList.add('visible');
+        panelTextEventos && panelTextEventos.setAttribute('aria-hidden', 'false');
+      }
+    }
+
+    function handlePanelClick(clickedPanel) {
+      const isBodas = clickedPanel === panelBodas;
+      const alreadyExpanded = twoPanelsSection.classList.contains(isBodas ? 'panel-bodas-expanded' : 'panel-eventos-expanded');
+      if (alreadyExpanded) {
+        twoPanelsSection.classList.remove('panel-bodas-expanded', 'panel-eventos-expanded');
+        panelTextBodas && panelTextBodas.classList.remove('visible');
+        panelTextEventos && panelTextEventos.classList.remove('visible');
+        panelTextBodas && panelTextBodas.setAttribute('aria-hidden', 'true');
+        panelTextEventos && panelTextEventos.setAttribute('aria-hidden', 'true');
+        panelBodas && panelBodas.setAttribute('aria-expanded', 'false');
+        panelEventos && panelEventos.setAttribute('aria-expanded', 'false');
+        return;
+      }
+      setExpanded(clickedPanel);
+    }
+
+    panelBodas.addEventListener('click', () => handlePanelClick(panelBodas));
+    panelEventos.addEventListener('click', () => handlePanelClick(panelEventos));
+    panelBodas.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handlePanelClick(panelBodas); } });
+    panelEventos.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handlePanelClick(panelEventos); } });
+
+    /* Hover “pro” del divisor diagonal:
+       - Solo en dispositivos con hover real (mouse/trackpad).
+       - Actualiza clases con requestAnimationFrame (throttling) para evitar reflows frecuentes.
+       - Se limpia al salir del contenedor o si un panel entra en modo expandido. */
+    const hoverCapableMq = window.matchMedia('(hover: hover) and (pointer: fine)');
+    let rafId = 0;
+    let nextHover = null; // 'bodas' | 'eventos' | null
+
+    const applyHoverState = () => {
+      rafId = 0;
+      if (!twoPanelsSection) return;
+      const isExpanded = twoPanelsSection.classList.contains('panel-bodas-expanded')
+        || twoPanelsSection.classList.contains('panel-eventos-expanded');
+      const bodasOn = !isExpanded && nextHover === 'bodas';
+      const eventosOn = !isExpanded && nextHover === 'eventos';
+      twoPanelsSection.classList.toggle('is-hover-bodas', bodasOn);
+      twoPanelsSection.classList.toggle('is-hover-eventos', eventosOn);
+    };
+
+    const scheduleHover = (state) => {
+      nextHover = state;
+      if (rafId) return;
+      rafId = window.requestAnimationFrame(applyHoverState);
+    };
+
+    const clearHover = () => scheduleHover(null);
+
+    const onEnterBodas = (e) => {
+      if (!hoverCapableMq.matches) return;
+      if (e && e.pointerType && e.pointerType !== 'mouse') return;
+      scheduleHover('bodas');
+    };
+    const onEnterEventos = (e) => {
+      if (!hoverCapableMq.matches) return;
+      if (e && e.pointerType && e.pointerType !== 'mouse') return;
+      scheduleHover('eventos');
+    };
+    const onLeaveAny = (e) => {
+      if (e && e.pointerType && e.pointerType !== 'mouse') return;
+      clearHover();
+    };
+
+    panelBodas.addEventListener('pointerenter', onEnterBodas);
+    panelEventos.addEventListener('pointerenter', onEnterEventos);
+
+    if (twoPanels) {
+      twoPanels.addEventListener('pointerleave', onLeaveAny);
+      twoPanels.addEventListener('mouseleave', () => clearHover());
+    }
+
+    panelBodas.addEventListener('focusin', () => { if (hoverCapableMq.matches) scheduleHover('bodas'); });
+    panelEventos.addEventListener('focusin', () => { if (hoverCapableMq.matches) scheduleHover('eventos'); });
+    panelBodas.addEventListener('focusout', () => clearHover());
+    panelEventos.addEventListener('focusout', () => clearHover());
+
+    if (hoverCapableMq && hoverCapableMq.addEventListener) {
+      hoverCapableMq.addEventListener('change', () => {
+        if (!hoverCapableMq.matches) clearHover();
+      });
+    }
+
+    /* Revelar texto al hacer scroll cuando el panel está expandido */
+    if (panelTextBodas && panelTextEventos) {
+      [panelTextBodas, panelTextEventos].forEach((el) => {
+        ScrollTrigger.create({
+          trigger: el,
+          start: 'top 85%',
+          end: 'top 60%',
+          onEnter: () => {
+            const forBodas = el === panelTextBodas;
+            if (twoPanelsSection.classList.contains(forBodas ? 'panel-bodas-expanded' : 'panel-eventos-expanded')) {
+              el.classList.add('visible');
+              el.setAttribute('aria-hidden', 'false');
+            }
+          }
+        });
+      });
+    }
   }
 
   if (!isContact && videoSpacer && video) {
@@ -204,15 +338,21 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const mainContent = document.querySelector('.main-content');
-  if (!isContact && mainContent && videoSpacer) {
-    gsap.set(mainContent, { autoAlpha: 0 });
-    ScrollTrigger.create({
-      trigger: videoSpacer,
-      start: 'top top',
-      end: '+=200',
-      onLeave: () => gsap.to(mainContent, { autoAlpha: 1, duration: 0.2 }),
-      onEnterBack: () => gsap.set(mainContent, { autoAlpha: 0 })
-    });
+  const twoPanelsSectionEl = document.querySelector('.two-panels-section');
+  if (!isContact && mainContent) {
+    if (twoPanelsSectionEl) {
+      /* Con dos paneles: no ocultar el main content; al hacer scroll se ve el apartado asomando */
+      gsap.set(mainContent, { autoAlpha: 1 });
+    } else if (videoSpacer) {
+      gsap.set(mainContent, { autoAlpha: 0 });
+      ScrollTrigger.create({
+        trigger: videoSpacer,
+        start: 'top top',
+        end: '+=200',
+        onLeave: () => gsap.to(mainContent, { autoAlpha: 1, duration: 0.2 }),
+        onEnterBack: () => gsap.set(mainContent, { autoAlpha: 0 })
+      });
+    }
   }
 
   const logoLink = document.querySelector('.logo-link');
@@ -250,10 +390,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Parallax con GSAP solo para las 3 primeras imágenes principales
-  const mainGsapImgs = Array.from(document.querySelectorAll('.image-container .focus-frame > img')).slice(0, 3);
+  // Parallax con GSAP: imágenes de paneles (Bodas/Eventos) y luego collage
+  const panelImgsForParallax = document.querySelectorAll('.two-panels .focus-frame > img');
+  const mainGsapImgs = panelImgsForParallax.length
+    ? Array.from(panelImgsForParallax)
+    : Array.from(document.querySelectorAll('.image-container .focus-frame > img')).slice(0, 3);
   mainGsapImgs.forEach((img) => {
-    const container = img.closest('.image-container');
+    const container = img.closest('.panel') || img.closest('.image-container');
     if (!container) return;
     const startY = isSmall ? 8 : 12;
     const endY = isSmall ? -16 : -24;
@@ -279,9 +422,10 @@ document.addEventListener('DOMContentLoaded', () => {
       img.addEventListener('load', () => { img.dataset.loaded = 'true'; }, { once: true });
     }
   };
-  // Asegurar que las imágenes principales marcan loaded para revelar la etiqueta
+  // Asegurar que las imágenes principales y de paneles marcan loaded para revelar la etiqueta
+  const panelImgsLoaded = Array.from(document.querySelectorAll('.two-panels .focus-frame > img'));
   const mainImgsLoaded = Array.from(document.querySelectorAll('.image-container .focus-frame > img'));
-  mainImgsLoaded.forEach(markLoaded);
+  [...panelImgsLoaded, ...mainImgsLoaded].forEach(markLoaded);
   const collageRows = document.querySelectorAll('.collage-row');
   collageImgs.forEach(markLoaded);
   const collageWrap = document.querySelector('.focus-frame .collage-track');
@@ -519,10 +663,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const navbar = document.querySelector('.navbar');
-  const firstImage = document.querySelector('.image-container');
-  if (navbar && firstImage) {
+  const firstScrollTrigger = document.querySelector('.two-panels-section') || document.querySelector('.image-container');
+  if (navbar && firstScrollTrigger) {
     ScrollTrigger.create({
-      trigger: firstImage,
+      trigger: firstScrollTrigger,
       start: 'top top',
       onEnter: () => navbar.classList.add('dark'),
       onLeaveBack: () => navbar.classList.remove('dark')

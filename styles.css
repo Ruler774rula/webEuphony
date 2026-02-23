@@ -136,10 +136,10 @@ body.contact-page .logo { display: none; }
 
 
 .video-spacer {
-  height: 70vh;
+  height: 100vh;
 }
 @supports (height: 100svh) {
-  .video-spacer { height: 70svh; }
+  .video-spacer { height: 100svh; }
 }
 
 .logo {
@@ -723,6 +723,243 @@ form {
     margin: 0 auto;
 }
 
+/* Sección dos paneles: Bodas (izq) y Eventos (der) */
+.two-panels-section {
+  width: 100%;
+  position: relative;
+  background-color: #000;
+  min-height: 120vh;
+}
+
+.two-panels-wrap {
+  width: calc(100vw - clamp(64px, 8vw, 104px));
+  max-width: none;
+  margin: 0 auto;
+  padding: 0;
+  position: relative;
+}
+
+.two-panels {
+  width: 100%;
+  min-height: 92vh;
+  min-height: 92svh;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: #000;
+
+  /* Control global de la “costura” diagonal (se mueve en hover y mantiene grosor constante) */
+  --seam-shift: 0%; /* - hacia la izquierda, + hacia la derecha */
+  --seam-tilt: 4%; /* diferencia X entre top y bottom para el ángulo */
+  --seam-top: calc(50% + var(--seam-shift));
+  --seam-bot: calc(var(--seam-top) - var(--seam-tilt));
+  --seam-gap: clamp(10px, 1.4vw, 18px); /* espaciado visible constante entre secciones */
+}
+
+.panel {
+  position: absolute;
+  inset: 0;
+  min-height: 92vh;
+  min-height: 92svh;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: clip-path 800ms ease-in-out, opacity 350ms ease-in-out, filter 800ms ease-in-out;
+  -webkit-tap-highlight-color: transparent;
+  will-change: clip-path, filter;
+  backface-visibility: hidden;
+}
+
+.panel-bodas {
+  z-index: 1;
+  -webkit-clip-path: polygon(
+    0 0,
+    calc(var(--seam-top) - (var(--seam-gap) / 2)) 0,
+    calc(var(--seam-bot) - (var(--seam-gap) / 2)) 100%,
+    0 100%
+  );
+  clip-path: polygon(
+    0 0,
+    calc(var(--seam-top) - (var(--seam-gap) / 2)) 0,
+    calc(var(--seam-bot) - (var(--seam-gap) / 2)) 100%,
+    0 100%
+  );
+}
+
+.panel-eventos {
+  z-index: 1;
+  -webkit-clip-path: polygon(
+    calc(var(--seam-top) + (var(--seam-gap) / 2)) 0,
+    100% 0,
+    100% 100%,
+    calc(var(--seam-bot) + (var(--seam-gap) / 2)) 100%
+  );
+  clip-path: polygon(
+    calc(var(--seam-top) + (var(--seam-gap) / 2)) 0,
+    100% 0,
+    100% 100%,
+    calc(var(--seam-bot) + (var(--seam-gap) / 2)) 100%
+  );
+}
+
+/* Hover (vía clase JS): la costura se desplaza y el panel activo gana profundidad */
+.two-panels-section.is-hover-bodas:not(.panel-bodas-expanded):not(.panel-eventos-expanded) .two-panels {
+  --seam-shift: 7%;
+}
+
+.two-panels-section.is-hover-eventos:not(.panel-bodas-expanded):not(.panel-eventos-expanded) .two-panels {
+  --seam-shift: -7%;
+}
+
+.two-panels-section.is-hover-bodas:not(.panel-bodas-expanded):not(.panel-eventos-expanded) .panel-bodas {
+  z-index: 2;
+  filter: saturate(1.05) contrast(1.03);
+}
+
+.two-panels-section.is-hover-bodas:not(.panel-bodas-expanded):not(.panel-eventos-expanded) .panel-eventos {
+  filter: saturate(0.92) contrast(0.98);
+}
+
+.two-panels-section.is-hover-eventos:not(.panel-bodas-expanded):not(.panel-eventos-expanded) .panel-eventos {
+  z-index: 2;
+  filter: saturate(1.05) contrast(1.03);
+}
+
+.two-panels-section.is-hover-eventos:not(.panel-bodas-expanded):not(.panel-eventos-expanded) .panel-bodas {
+  filter: saturate(0.92) contrast(0.98);
+}
+
+/* Estado expandido: un panel ocupa todo el frame y el otro desaparece limpiamente */
+.two-panels-section.panel-bodas-expanded .panel-bodas,
+.two-panels-section.panel-eventos-expanded .panel-eventos {
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  z-index: 2;
+}
+
+.two-panels-section.panel-bodas-expanded .panel-eventos {
+  -webkit-clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
+  clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.two-panels-section.panel-eventos-expanded .panel-bodas {
+  -webkit-clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+  clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.panel:focus {
+  outline: 2px solid rgba(212, 175, 55, 0.6);
+  outline-offset: 2px;
+}
+
+.panel:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.panel .panel-frame {
+  width: 100%;
+  height: 100%;
+  min-height: 92vh;
+  min-height: 92svh;
+  flex: 1;
+  transform: translate3d(0, 0, 0);
+  transition: transform 800ms ease-in-out, box-shadow 800ms ease-in-out;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Profundidad 3D sutil en hover */
+.two-panels-section.is-hover-bodas:not(.panel-bodas-expanded):not(.panel-eventos-expanded) .panel-bodas .panel-frame,
+.two-panels-section.is-hover-eventos:not(.panel-bodas-expanded):not(.panel-eventos-expanded) .panel-eventos .panel-frame {
+  transform: perspective(1100px) translateZ(18px) scale(1.015);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.55);
+}
+
+.two-panels-section.is-hover-bodas:not(.panel-bodas-expanded):not(.panel-eventos-expanded) .panel-eventos .panel-frame,
+.two-panels-section.is-hover-eventos:not(.panel-bodas-expanded):not(.panel-eventos-expanded) .panel-bodas .panel-frame {
+  transform: perspective(1100px) translateZ(0px) scale(0.985);
+}
+
+/* Centrar el texto (label) dentro del área visible de cada panel, no en el contenedor */
+.two-panels .panel-bodas .panel-frame .frame-label {
+  left: calc((var(--seam-top) - (var(--seam-gap) / 2)) / 2);
+}
+
+.two-panels .panel-eventos .panel-frame .frame-label {
+  left: calc((100% + var(--seam-top) + (var(--seam-gap) / 2)) / 2);
+}
+
+/* Fallback cuando no existe soporte de clip-path */
+@supports not (clip-path: polygon(0 0)) {
+  .two-panels {
+    display: flex;
+    gap: clamp(10px, 1.4vw, 18px);
+    overflow: visible;
+  }
+  .panel {
+    position: relative;
+    flex: 1 1 50%;
+    inset: auto;
+    clip-path: none;
+    -webkit-clip-path: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .panel .panel-frame,
+  .panel-text {
+    transition-duration: 0.2s;
+  }
+}
+
+/* Dispositivos táctiles: sin “hover”; se mantiene el divisor estático */
+@media (hover: none), (pointer: coarse) {
+  .two-panels {
+    --seam-shift: 0%;
+  }
+}
+
+/* Texto debajo del panel expandido */
+.panel-text-wrap {
+  width: calc(100vw - clamp(48px, 6vw, 88px));
+  margin: 0 auto;
+  position: relative;
+  margin-top: clamp(32px, 6vh, 64px);
+  padding-bottom: clamp(24px, 4vh, 48px);
+}
+
+.panel-text {
+  display: none;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.panel-text.visible {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.two-panels-section.panel-bodas-expanded .panel-text-bodas.visible {
+  display: flex;
+}
+
+.two-panels-section.panel-eventos-expanded .panel-text-eventos.visible {
+  display: flex;
+}
+
 .image-container {
     width: 100%;
     position: relative;
@@ -786,7 +1023,7 @@ form {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate3d(-50%, -50%, 0);
   color: #fff;
   font-family: 'NEXTART', sans-serif;
   font-weight: 900;
@@ -795,7 +1032,7 @@ form {
   z-index: 4;
   opacity: 0;
   filter: blur(12px);
-  transition: opacity 0.6s ease, filter 0.6s ease, transform 0.6s ease;
+  transition: opacity 0.6s ease, filter 0.6s ease, transform 0.6s ease, left 800ms ease-in-out;
   text-align: center;
   pointer-events: none;
   text-shadow: 0 0 8px rgba(0,0,0,0.4), 0 0 8px rgba(0,0,0,0.4), 0 0 8px rgba(0,0,0,0.4), 0 0 8px rgba(0,0,0,0.4);
@@ -934,6 +1171,34 @@ form {
 .spacer {
     height: 0; /* reducir al mínimo la separación */
     background-color: #000;
+}
+
+/* Panel frame dentro de .two-panels: mismo estilo que focus-frame */
+.two-panels .focus-frame.panel-frame {
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+  .two-panels-section {
+    min-height: auto;
+  }
+  .two-panels {
+    min-height: min(85vh, 90vw);
+    --seam-gap: clamp(8px, 2.4vw, 14px);
+    --seam-tilt: 3%;
+  }
+  .panel {
+    min-height: min(85vh, 90vw);
+  }
+  .panel .panel-frame {
+    min-height: min(85vh, 90vw);
+    border-radius: 12px;
+  }
+  .two-panels-section.panel-bodas-expanded .panel-bodas .panel-frame,
+  .two-panels-section.panel-eventos-expanded .panel-eventos .panel-frame {
+    border-radius: 12px;
+  }
 }
 
 @media (max-width: 768px) {

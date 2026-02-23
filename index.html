@@ -86,42 +86,38 @@
 
   <div class="spacer"></div>
 
-  <!-- Sección principal con imágenes animadas -->
+  <!-- Sección principal: dos paneles Bodas (izq) y Eventos (der) -->
   <main class="main-content">
     <div class="scroll-container">
-        <div class="image-container">
-            <div class="focus-frame">
-              <img src="imagenes\pexels-marc-schulte-656598-2952834_resultado.webp" alt="Imagen 1">
-              <div class="frame-label inverse">Tecnología</div>
+        <section class="two-panels-section" aria-label="Bodas y Eventos">
+          <div class="two-panels-wrap">
+            <div class="two-panels" id="twoPanels">
+              <div class="panel panel-bodas" id="panelBodas" data-panel="bodas" role="button" tabindex="0" aria-expanded="false" aria-label="Ver Bodas">
+                <div class="focus-frame panel-frame">
+                  <img src="imagenes\pexels-mm-fotovideo-22469727-30789033_resultado.webp" alt="Bodas">
+                  <div class="frame-label inverse">Bodas</div>
+                </div>
+              </div>
+              <div class="panel panel-eventos" id="panelEventos" data-panel="eventos" role="button" tabindex="0" aria-expanded="false" aria-label="Ver Eventos">
+                <div class="focus-frame panel-frame">
+                  <img src="imagenes\pexels-bertellifotografia-29486087_resultado.webp" alt="Eventos">
+                  <div class="frame-label inverse">Eventos</div>
+                </div>
+              </div>
             </div>
-        </div>
-        <div class="text-content">
-            <h2>Tecnología que eleva cada instante</h2>
-            <p>Sonido hi‑fi, luz arquitectónica y técnicos profesionales.</p>
-        </div>
-        
-        <div class="image-container">
-            <div class="focus-frame">
-              <img src="imagenes\pexels-bertellifotografia-29486087_resultado.webp" alt="Imagen 2">
-              <div class="frame-label inverse">Eventos</div>
+          </div>
+          <div class="panel-text-wrap">
+            <div class="panel-text panel-text-bodas text-content" id="panelTextBodas" aria-hidden="true">
+              <h2>Amor que se hace música y memoria</h2>
+              <p>Bodas de lujo que armonizan tiempos, música y atmósfera para recuerdos inolvidables.</p>
             </div>
-        </div>
-        <div class="text-content">
-            <h2>Lujo sin concesiones</h2>
-            <p>Eventos a medida con materiales premium, decoración curada y hospitalidad impecable.</p>
-        </div>
-        
-        <div class="image-container">
-            <div class="focus-frame">
-              <img src="imagenes\pexels-mm-fotovideo-22469727-30789033_resultado.webp" alt="Imagen 3">
-              <div class="frame-label inverse">Bodas</div>
+            <div class="panel-text panel-text-eventos text-content" id="panelTextEventos" aria-hidden="true">
+              <h2>Lujo sin concesiones</h2>
+              <p>Eventos a medida con materiales premium, decoración curada y hospitalidad impecable.</p>
             </div>
-        </div>
-        <div class="text-content">
-            <h2>Amor que se hace música y memoria</h2>
-            <p>Bodas de lujo que armonizan tiempos, música y atmósfera para recuerdos inolvidables.</p>
-        </div>
-        
+          </div>
+        </section>
+
         <div class="image-container">
             <div class="focus-frame">
               <div class="collage-track">
