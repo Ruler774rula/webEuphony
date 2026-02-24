@@ -103,7 +103,7 @@
             <div class="panel panel-bodas" id="panelBodas" data-panel="bodas" role="button" tabindex="0" aria-expanded="false" aria-label="Ver Bodas">
               <div class="focus-frame panel-frame">
                 <img class="panel-img panel-img-primary" src="imagenes/pexels-mm-fotovideo-22469727-30789033_resultado.webp" alt="Bodas" decoding="async" fetchpriority="low" loading="eager">
-                <img class="panel-img panel-img-alt" src="imagenes/pexels-marc-schulte-656598-2952834_resultado.webp" alt="" aria-hidden="true" decoding="async" loading="lazy">
+                <img class="panel-img panel-img-alt" src="imagenes/pexels-marc-schulte-656598-2952834_resultado.png" alt="" aria-hidden="true" decoding="async" loading="lazy">
                 <div class="frame-label inverse">Bodas</div>
               </div>
             </div>
@@ -154,10 +154,49 @@
     <!-- CARD 4: CONTACTO (FOOTER) -->
     <section class="card-section" id="card-contact">
       <footer class="footer" id="footer">
-        <div class="footer-content">
+        <div class="footer-content" id="footerInitialContent">
           <h3>¿Listo para crear tu evento?</h3>
           <p>Contacta con nosotros y comencemos a planificar tu día especial</p>
-          <a href="./contacta.html" class="footer-contact-btn" id="footerContactBtn">CONTACTA</a>
+          <button class="footer-contact-btn" id="footerContactBtn">CONTACTA</button>
+        </div>
+        
+        <!-- Form Container -->
+        <div class="footer-form-container" id="footerFormContainer">
+          <div class="contact-form">
+            <div class="form-header">
+              <h3>Contacta con nosotros</h3>
+              <button class="close-btn" id="closeFormBtn" aria-label="Cerrar formulario"></button>
+            </div>
+
+            <form id="contactFormElement">
+              <div class="form-group">
+                <label for="nombre">Nombre <span class="req">*</span></label>
+                <input type="text" id="nombre" name="nombre" required>
+              </div>
+
+              <div class="form-group">
+                <label for="email">Email <span class="req">*</span></label>
+                <input type="email" id="email" name="email" required>
+              </div>
+
+              <div class="form-group">
+                <label for="telefono">Número de teléfono <span class="req">*</span></label>
+                <input type="tel" id="telefono" name="telefono" required>
+              </div>
+
+              <div class="form-group">
+                <label for="servicio">Servicio de interés <span class="req">*</span></label>
+                <textarea id="servicio" name="servicio" rows="4" required></textarea>
+              </div>
+
+              <button type="submit" class="submit-btn" disabled>Enviar</button>
+            </form>
+
+            <div class="thank-you-message" id="thankYouMessage">
+              <h3>¡Gracias por contactarnos!</h3>
+              <p>Nos pondremos en contacto contigo pronto.</p>
+            </div>
+          </div>
         </div>
         
         <div class="social-icons" id="socialIcons">
