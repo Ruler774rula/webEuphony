@@ -32,137 +32,155 @@
       <img id="logoColor" src="./Logos/IMAGO EUPHONY Color.png" alt="Imagotipo Euphony color difuminado" aria-hidden="true" />
     </div>
   </div>
-  <!-- Header con efectos de iluminación -->
-  
-    <div id="video-container">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-actions">
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú"><i class="fas fa-bars"></i></button>
+    </div>
+    <div class="logo-container"></div>
+    <div class="navbar-actions">
+      <button class="contact-toggle" id="contactToggle">Contacta</button>
+    </div>
+  </nav>
+
+  <!-- Overlays -->
+  <div id="pageFadeOverlay" class="page-fade-overlay" aria-hidden="true"></div>
+  <div class="menu-overlay" id="menuOverlay"></div>
+
+  <!-- Side Menu -->
+  <aside class="side-menu" id="sideMenu" aria-label="Menú lateral">
+    <div class="side-menu-header">
+      Menú
+      <button class="close-menu-button" id="closeMenuButton" aria-label="Cerrar menú">◣</button>
+    </div>
+    <ul class="side-menu-list">
+      <li><a href="./index.html" class="side-menu-link" id="menuHomeLink">Inicio</a></li>
+      <li><a href="#" class="side-menu-link">Sobre Nosotros</a></li>
+      <li><a href="#" class="side-menu-link">Galería</a></li>
+      <li><a href="./contacta.html" class="side-menu-link" id="menuContactLink">Contacta</a></li>
+    </ul>
+    <div class="social-icons">
+      <img src="./icons/icons8-facebook-100.png" alt="Facebook" loading="lazy" decoding="async" fetchpriority="low">
+      <img src="./icons/icons8-instagram-100.png" alt="Instagram" loading="lazy" decoding="async" fetchpriority="low">
+      <img src="./icons/icons8-whatsapp-100.png" alt="WhatsApp" loading="lazy" decoding="async" fetchpriority="low">
+    </div>
+  </aside>
+
+  <!-- CONTENEDOR PRINCIPAL DEL SISTEMA DE CARDS -->
+  <main id="card-scroll-container">
+    
+    <!-- CARD 1: INICIO (VIDEO) -->
+    <section class="card-section" id="card-home">
+      <div id="video-container">
         <video id="bg-video" autoplay loop muted playsinline preload="metadata">
           <source src="./public/videoplayback.webm" type="video/webm">
         </video>
         <div class="noise"></div>
       </div>
-      <div class="video-spacer"></div>
-    <nav class="navbar">
-      <div class="navbar-actions">
-        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú"><i class="fas fa-bars"></i></button>
-      </div>
       <div class="logo-container">
         <div class="logo">
-            <a href="#" class="logo-link">
-              <img src="Logos/LOGO EUPHONY color blanco.png" alt="Euphony Logo blanco" class="logo-img logo-white">
-              <img src="Logos/LOGO EUPHONY color blanco logo color.png" alt="Euphony Logo color" class="logo-img logo-color">
-            </a>
-          </div>
-      </div>
-      <div class="navbar-actions">
-        <button class="contact-toggle" id="contactToggle">Contacta</button>
-      </div>
-    </nav>
-    <div id="pageFadeOverlay" class="page-fade-overlay" aria-hidden="true"></div>
-    <div class="menu-overlay" id="menuOverlay"></div>
-    <aside class="side-menu" id="sideMenu" aria-label="Menú lateral">
-      <div class="side-menu-header">
-            Menú
-            <button class="close-menu-button" id="closeMenuButton" aria-label="Cerrar menú">◣</button>
-          </div>
-      <ul class="side-menu-list">
-        <li><a href="./index.html" class="side-menu-link" id="menuHomeLink">Inicio</a></li>
-        <li><a href="#" class="side-menu-link">Sobre Nosotros</a></li>
-        <li><a href="#" class="side-menu-link">Galería</a></li>
-        <li><a href="./contacta.html" class="side-menu-link" id="menuContactLink">Contacta</a></li>
-      </ul>
-      <div class="social-icons">
-        <img src="./icons/icons8-facebook-100.png" alt="Facebook" loading="lazy" decoding="async" fetchpriority="low">
-        <img src="./icons/icons8-instagram-100.png" alt="Instagram" loading="lazy" decoding="async" fetchpriority="low">
-        <img src="./icons/icons8-whatsapp-100.png" alt="WhatsApp" loading="lazy" decoding="async" fetchpriority="low">
-      </div>
-    </aside>
-    <!-- Prompt fijo en la parte baja de la pantalla -->
-    <div id="discoverPrompt" class="discover-prompt" aria-label="Descubrir más">
-      <span class="prompt-text">Descubrir más</span>
-      <span class="arrow" aria-hidden="true">▼</span>
-    </div>
-    
-    <!-- Eliminado hero-title y subtitle para enfocarse en logo grande -->
-  
-
-  <div class="spacer"></div>
-
-  <!-- Sección principal: dos paneles Bodas (izq) y Eventos (der) -->
-  <main class="main-content">
-    <div class="scroll-container">
-        <section class="two-panels-section" aria-label="Bodas y Eventos">
-          <div class="two-panels-wrap">
-            <div class="two-panels" id="twoPanels">
-              <div class="panel panel-bodas" id="panelBodas" data-panel="bodas" role="button" tabindex="0" aria-expanded="false" aria-label="Ver Bodas">
-                <div class="focus-frame panel-frame">
-                  <img class="panel-img panel-img-primary" src="imagenes/pexels-mm-fotovideo-22469727-30789033_resultado.webp" alt="Bodas" decoding="async" fetchpriority="low" loading="eager">
-                  <img class="panel-img panel-img-alt" src="imagenes/pexels-marc-schulte-656598-2952834_resultado.webp" alt="" aria-hidden="true" decoding="async" loading="lazy">
-                  <div class="frame-label inverse">Bodas</div>
-                </div>
-              </div>
-              <div class="panel panel-eventos" id="panelEventos" data-panel="eventos" role="button" tabindex="0" aria-expanded="false" aria-label="Ver Eventos">
-                <div class="focus-frame panel-frame">
-                  <img class="panel-img panel-img-primary" src="imagenes/pexels-bertellifotografia-29486087_resultado.webp" alt="Eventos" decoding="async" fetchpriority="high" loading="eager">
-                  <img class="panel-img panel-img-alt" src="imagenes/Low/pexels-gustavo-trotta-300282193-14470108_resultado.webp" alt="" aria-hidden="true" decoding="async" loading="lazy">
-                  <div class="frame-label inverse">Eventos</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="panel-text-wrap">
-            <div class="panel-text panel-text-bodas text-content" id="panelTextBodas" aria-hidden="true">
-              <h2>Amor que se hace música y memoria</h2>
-              <p>Bodas de lujo que armonizan tiempos, música y atmósfera para recuerdos inolvidables.</p>
-            </div>
-            <div class="panel-text panel-text-eventos text-content" id="panelTextEventos" aria-hidden="true">
-              <h2>Lujo sin concesiones</h2>
-              <p>Eventos a medida con materiales premium, decoración curada y hospitalidad impecable.</p>
-            </div>
-          </div>
-        </section>
-
-        <div class="image-container">
-            <div class="focus-frame">
-              <div class="collage-track">
-                <div class="collage-row row-top">
-                  <div class="collage-item w-l ratio-wide"><img loading="lazy" decoding="async" fetchpriority="low" src="imagenes\Low\pexels-bertellifotografia-16935897_resultado.webp" alt=""></div>
-                  <div class="collage-item w-l ratio-landscape"><img loading="lazy" decoding="async" fetchpriority="low" src="imagenes\Low\pexels-amar-10360899_resultado.webp" alt=""></div>
-                  <div class="collage-item w-m ratio-landscape"><img loading="lazy" decoding="async" fetchpriority="low" src="imagenes\Low\pexels-danikprihodko-15865306_resultado.webp" alt=""></div>
-                  <div class="collage-item w-l ratio-wide"><img loading="lazy" decoding="async" fetchpriority="low" src="imagenes\Low\pexels-danikprihodko-15964956_resultado.webp" alt=""></div>
-                </div>
-                <div class="collage-row row-bot">
-                  <div class="collage-item w-l ratio-landscape"><img loading="lazy" decoding="async" fetchpriority="low" src="imagenes\Low\pexels-aysenuryilmaz-18220882_resultado.webp" alt=""></div>
-                  <div class="collage-item w-m ratio-landscape"><img loading="lazy" decoding="async" fetchpriority="low" src="imagenes\Low\pexels-breno-cardoso-149064345-18322552_resultado.webp" alt=""></div>
-                  <div class="collage-item w-l ratio-wide"><img loading="lazy" decoding="async" fetchpriority="low" src="imagenes\Low\pexels-nadin-sh-78971847-10654299_resultado.webp" alt=""></div>
-                  <div class="collage-item w-m ratio-landscape"><img loading="lazy" decoding="async" fetchpriority="low" src="imagenes\Low\pexels-isabella-mendes-107313-19551009_resultado.webp" alt=""></div>
-                </div>
-              </div>
-            </div>
+          <a href="#" class="logo-link">
+            <img src="Logos/LOGO EUPHONY color blanco.png" alt="Euphony Logo blanco" class="logo-img logo-white">
+            <img src="Logos/LOGO EUPHONY color blanco logo color.png" alt="Euphony Logo color" class="logo-img logo-color">
+          </a>
         </div>
-    </div>
+      </div>
+      <div class="video-spacer"></div> <!-- Spacer para mantener layout original si es necesario -->
+      
+      <!-- Prompt fijo en la parte baja -->
+      <div id="discoverPrompt" class="discover-prompt" aria-label="Descubrir más">
+        <span class="prompt-text">Descubrir más</span>
+        <span class="arrow" aria-hidden="true">▼</span>
+      </div>
+    </section>
+
+    <!-- CARD 2: PANELES (BODAS/EVENTOS) -->
+    <section class="card-section" id="card-panels">
+      <div class="two-panels-section" aria-label="Bodas y Eventos">
+        <div class="two-panels-wrap">
+          <div class="two-panels" id="twoPanels">
+            <div class="panel panel-bodas" id="panelBodas" data-panel="bodas" role="button" tabindex="0" aria-expanded="false" aria-label="Ver Bodas">
+              <div class="focus-frame panel-frame">
+                <img class="panel-img panel-img-primary" src="imagenes/pexels-mm-fotovideo-22469727-30789033_resultado.webp" alt="Bodas" decoding="async" fetchpriority="low" loading="eager">
+                <img class="panel-img panel-img-alt" src="imagenes/pexels-marc-schulte-656598-2952834_resultado.webp" alt="" aria-hidden="true" decoding="async" loading="lazy">
+                <div class="frame-label inverse">Bodas</div>
+              </div>
+            </div>
+            <div class="panel panel-eventos" id="panelEventos" data-panel="eventos" role="button" tabindex="0" aria-expanded="false" aria-label="Ver Eventos">
+              <div class="focus-frame panel-frame">
+                <img class="panel-img panel-img-primary" src="imagenes/pexels-bertellifotografia-29486087_resultado.webp" alt="Eventos" decoding="async" fetchpriority="high" loading="eager">
+                <img class="panel-img panel-img-alt" src="imagenes/Low/pexels-gustavo-trotta-300282193-14470108_resultado.webp" alt="" aria-hidden="true" decoding="async" loading="lazy">
+                <div class="frame-label inverse">Eventos</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-text-wrap">
+          <div class="panel-text panel-text-bodas text-content" id="panelTextBodas" aria-hidden="true">
+            <h2>Amor que se hace música y memoria</h2>
+            <p>Bodas de lujo que armonizan tiempos, música y atmósfera para recuerdos inolvidables.</p>
+          </div>
+          <div class="panel-text panel-text-eventos text-content" id="panelTextEventos" aria-hidden="true">
+            <h2>Lujo sin concesiones</h2>
+            <p>Eventos a medida con materiales premium, decoración curada y hospitalidad impecable.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CARD 3: COLLAGE -->
+    <section class="card-section" id="card-collage">
+      <div class="image-container">
+        <div class="focus-frame">
+          <div class="collage-track">
+            <div class="collage-row row-top">
+              <div class="collage-item w-l ratio-wide"><img loading="lazy" decoding="async" fetchpriority="low" src="imagenes\Low\pexels-bertellifotografia-16935897_resultado.webp" alt=""></div>
+              <div class="collage-item w-l ratio-landscape"><img loading="lazy" decoding="async" fetchpriority="low" src="imagenes\Low\pexels-amar-10360899_resultado.webp" alt=""></div>
+              <div class="collage-item w-m ratio-landscape"><img loading="lazy" decoding="async" fetchpriority="low" src="imagenes\Low\pexels-danikprihodko-15865306_resultado.webp" alt=""></div>
+              <div class="collage-item w-l ratio-wide"><img loading="lazy" decoding="async" fetchpriority="low" src="imagenes\Low\pexels-danikprihodko-15964956_resultado.webp" alt=""></div>
+            </div>
+            <div class="collage-row row-bot">
+              <div class="collage-item w-l ratio-landscape"><img loading="lazy" decoding="async" fetchpriority="low" src="imagenes\Low\pexels-aysenuryilmaz-18220882_resultado.webp" alt=""></div>
+              <div class="collage-item w-m ratio-landscape"><img loading="lazy" decoding="async" fetchpriority="low" src="imagenes\Low\pexels-breno-cardoso-149064345-18322552_resultado.webp" alt=""></div>
+              <div class="collage-item w-l ratio-wide"><img loading="lazy" decoding="async" fetchpriority="low" src="imagenes\Low\pexels-nadin-sh-78971847-10654299_resultado.webp" alt=""></div>
+              <div class="collage-item w-m ratio-landscape"><img loading="lazy" decoding="async" fetchpriority="low" src="imagenes\Low\pexels-isabella-mendes-107313-19551009_resultado.webp" alt=""></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CARD 4: CONTACTO (FOOTER) -->
+    <section class="card-section" id="card-contact">
+      <footer class="footer" id="footer">
+        <div class="footer-content">
+          <h3>¿Listo para crear tu evento?</h3>
+          <p>Contacta con nosotros y comencemos a planificar tu día especial</p>
+          <a href="./contacta.html" class="footer-contact-btn" id="footerContactBtn">CONTACTA</a>
+        </div>
+        
+        <div class="social-icons" id="socialIcons">
+          <img src="./icons/icons8-facebook-100.png" alt="Facebook" loading="lazy" decoding="async" fetchpriority="low">
+          <img src="./icons/icons8-instagram-100.png" alt="Instagram" loading="lazy" decoding="async" fetchpriority="low">
+          <img src="./icons/icons8-whatsapp-100.png" alt="WhatsApp" loading="lazy" decoding="async" fetchpriority="low">
+        </div>
+      </footer>
+    </section>
+
   </main>
 
-  <!-- Footer -->
-  <footer class="footer" id="footer">
-    <div class="footer-content">
-      <h3>¿Listo para crear tu evento?</h3>
-      <p>Contacta con nosotros y comencemos a planificar tu día especial</p>
-      <a href="./contacta.html" class="footer-contact-btn" id="footerContactBtn">CONTACTA</a>
-    </div>
-    
-    <div class="social-icons" id="socialIcons">
-      <img src="./icons/icons8-facebook-100.png" alt="Facebook" loading="lazy" decoding="async" fetchpriority="low">
-      <img src="./icons/icons8-instagram-100.png" alt="Instagram" loading="lazy" decoding="async" fetchpriority="low">
-      <img src="./icons/icons8-whatsapp-100.png" alt="WhatsApp" loading="lazy" decoding="async" fetchpriority="low">
-    </div>
-  </footer>
-
-  
-
-  
-  
+  <!-- Indicadores de Scroll -->
+  <div class="scroll-indicators">
+    <div class="indicator active" data-index="0" role="button" aria-label="Ir a Inicio"></div>
+    <div class="indicator" data-index="1" role="button" aria-label="Ir a Servicios"></div>
+    <div class="indicator" data-index="2" role="button" aria-label="Ir a Galería"></div>
+    <div class="indicator" data-index="3" role="button" aria-label="Ir a Contacto"></div>
+  </div>
 
   <script defer src="./scripts/collage-marquee.js"></script>
   <script defer src="./scripts/scroll-animations.js"></script>
+  <!-- Nuevo script para el sistema de cards -->
+  <script defer src="./scripts/card-system.js"></script>
 </body>
 </html>

@@ -287,6 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* Al hacer scroll hacia arriba por encima de la sección expandida, colapsar automáticamente */
+    /* Disabled for Card System
     let lastScrollY = window.scrollY;
     let scrollRaf = 0;
     const onScroll = () => {
@@ -306,8 +307,10 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     };
     window.addEventListener('scroll', onScroll, { passive: true });
+    */
 
     /* Revelar texto al hacer scroll cuando el panel está expandido */
+    /* Handled in card-system.js
     if (panelTextBodas && panelTextEventos) {
       [panelTextBodas, panelTextEventos].forEach((el) => {
         ScrollTrigger.create({
@@ -324,8 +327,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       });
     }
+    */
   }
 
+  /* ScrollTrigger logic disabled for Card System compatibility */
+  /*
   if (!isContact && videoSpacer && video) {
     gsap.to(video, {
       opacity: 0,
@@ -371,12 +377,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+  */
 
   const mainContent = document.querySelector('.main-content');
   const twoPanelsSectionEl = document.querySelector('.two-panels-section');
+  /*
   if (!isContact && mainContent) {
     if (twoPanelsSectionEl) {
-      /* Con dos paneles: no ocultar el main content; al hacer scroll se ve el apartado asomando */
       gsap.set(mainContent, { autoAlpha: 1 });
     } else if (videoSpacer) {
       gsap.set(mainContent, { autoAlpha: 0 });
@@ -389,6 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   }
+  */
 
   const logoLink = document.querySelector('.logo-link');
   if (logoLink && logo) {
@@ -426,6 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Parallax con GSAP: imágenes de paneles (Bodas/Eventos) y luego collage
+  /*
   const panelImgsForParallax = document.querySelectorAll('.two-panels .focus-frame > img');
   const mainGsapImgs = panelImgsForParallax.length
     ? Array.from(panelImgsForParallax)
@@ -446,6 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+  */
 
   const collageImgs = document.querySelectorAll('.focus-frame .collage-item img');
   // const placeholderGif = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
@@ -698,6 +708,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const navbar = document.querySelector('.navbar');
+  /*
   const firstScrollTrigger = document.querySelector('.two-panels-section') || document.querySelector('.image-container');
   if (navbar && firstScrollTrigger) {
     ScrollTrigger.create({
@@ -707,5 +718,6 @@ document.addEventListener('DOMContentLoaded', () => {
       onLeaveBack: () => navbar.classList.remove('dark')
     });
   }
+  */
 
 });

@@ -95,14 +95,17 @@ html {
   scroll-behavior: smooth;
   -ms-overflow-style: none;
   scrollbar-width: none;
+  height: 100%; /* Importante para el sistema de cards */
+  overflow: hidden; /* Evitar scroll nativo */
 }
 
 body {
   font-family: 'NEXTART', 'Arial', sans-serif;
   line-height: 1.6;
   color: var(--text-dark);
-  overflow-x: hidden;
+  overflow: hidden; /* Evitar scroll nativo */
   background: var(--secondary-color);
+  height: 100%;
 }
 body.contact-page { opacity: 0; }
 body.contact-page .logo { display: none; }
@@ -127,6 +130,11 @@ body.contact-page .logo { display: none; }
   background: #000;
   border-bottom-color: rgba(255,255,255,0.12);
 }
+.navbar.solid-bg {
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
 .navbar-actions {
   display: flex;
   align-items: center;
@@ -143,17 +151,14 @@ body.contact-page .logo { display: none; }
 }
 
 .logo {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
   z-index: 1001;
-  will-change: clip-path, transform; /* mejora rendimiento en la animación de máscara */
+  will-change: clip-path;
 }
 
 
 .discover-prompt {
-  position: fixed;
+  position: absolute; /* Cambiado a absolute */
   left: 50%;
   transform: translateX(-50%);
   bottom: 36px; /* en la parte baja de la pantalla */
@@ -234,6 +239,8 @@ body.contact-page .logo { display: none; }
 /* Secciones principales */
 .main-content {
   position: relative;
+  height: 100%;
+  width: 100%;
 }
 
 .section {
@@ -335,6 +342,10 @@ body.contact-page .logo { display: none; }
   padding: 4rem 2rem;
   text-align: center;
   position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .footer.modal-active {
   min-height: 100vh;
@@ -354,7 +365,7 @@ body.contact-page .footer.modal-active { padding-top: 0; padding-bottom: 0; }
 .footer-content {
   max-width: 800px;
   margin: 0 auto;
-  margin-top: clamp(32px, 8vh, 96px);
+  margin-top: 0; /* Centrado flex */
   text-align: center; /* Centra el botón */
 }
 
@@ -674,7 +685,7 @@ form {
 
 /* Video de fondo en header */
 #video-container {
-  position: fixed !important;
+  position: absolute !important; /* Cambiado a absolute para que se mueva con la card */
   inset: 0;
   width: 100%;
   height: 100%;
@@ -721,6 +732,7 @@ form {
 .scroll-container {
     width: 100%;
     margin: 0 auto;
+    height: 100%;
 }
 
 /* Sección dos paneles: Bodas (izq) y Eventos (der) */
@@ -728,7 +740,10 @@ form {
   width: 100%;
   position: relative;
   background-color: #000;
-  min-height: auto;
+  height: 100%; /* Ajuste para card */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .two-panels-wrap {
@@ -737,12 +752,13 @@ form {
   margin: 0 auto;
   padding: 0;
   position: relative;
+  height: 80vh; /* Altura controlada */
 }
 
 .two-panels {
   width: 100%;
-  min-height: 92vh;
-  min-height: 92svh;
+  height: 100%;
+  min-height: unset; /* Override */
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -759,8 +775,8 @@ form {
 .panel {
   position: absolute;
   inset: 0;
-  min-height: 92vh;
-  min-height: 92svh;
+  min-height: unset; /* Override */
+  height: 100%;
   display: flex;
   align-items: stretch;
   justify-content: center;
@@ -865,8 +881,7 @@ form {
 .panel .panel-frame {
   width: 100%;
   height: 100%;
-  min-height: 92vh;
-  min-height: 92svh;
+  min-height: unset; /* Override */
   flex: 1;
   transform: translate3d(0, 0, 0);
   transition: transform 800ms ease-in-out, box-shadow 800ms ease-in-out;
@@ -938,15 +953,18 @@ form {
 .panel-text-wrap {
   width: calc(100vw - clamp(48px, 6vw, 88px));
   margin: 0 auto;
-  position: relative;
-  margin-top: 12px;
-  padding-bottom: 12px;
+  position: absolute;
+  bottom: 5vh;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 10;
 }
 
 .two-panels-section.panel-bodas-expanded .panel-text-wrap,
 .two-panels-section.panel-eventos-expanded .panel-text-wrap {
-  margin-top: clamp(18px, 4vh, 40px);
-  padding-bottom: clamp(18px, 4vh, 40px);
+  margin-top: 0;
+  padding-bottom: 0;
 }
 
 .panel-text {
@@ -981,14 +999,15 @@ form {
     align-items: center;
     justify-content: center;
     background-color: #000; /* continuidad con el fondo */
-    padding-block: clamp(12px, 2.5vh, 20px);
+    padding-block: 0;
+    height: 100%;
 }
 
 /* Marco de enfoque (máscara) */
 .focus-frame {
   width: calc(100vw - clamp(64px, 8vw, 104px));
   max-width: none;
-  height: 92vh;
+  height: 80vh; /* Ajustado */
   overflow: hidden;
   border-radius: 16px;
   position: relative;
@@ -1178,7 +1197,7 @@ form {
     align-items: center;
     text-align: center;
     color: white;
-    background-color: #000;
+    background-color: transparent; /* Cambiado */
     position: relative;
     z-index: 1;
     width: calc(100vw - clamp(48px, 6vw, 88px));
@@ -1259,12 +1278,12 @@ form {
 
 @media (max-width: 768px) {
   .image-container {
-    height: auto;
+    height: 100%;
   }
   .focus-frame {
-    height: min(64vh, 100vw);
-    max-height: 100vw;
-    aspect-ratio: 1 / 1;
+    height: 80vh; /* Ajustado */
+    max-height: 100vh;
+    aspect-ratio: auto;
     border-radius: 12px;
   }
   .focus-frame img {
@@ -1423,4 +1442,103 @@ form {
 @media (prefers-reduced-motion: reduce) {
   .collage-row { animation-play-state: paused !important; }
   .discover-prompt .arrow { animation: none !important; }
+}
+
+/* --- ESTILOS SISTEMA DE CARDS --- */
+
+#card-scroll-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.card-section {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #000; /* Fondo base para cubrir la anterior */
+  will-change: transform;
+  /* El JS controlará el transform y z-index */
+}
+
+/* Ajustes específicos para cada card */
+
+/* Card 1: Home (Video transparente) */
+#card-home {
+  background-color: transparent; /* Permite ver el fondo si lo hubiera, pero tiene su propio video */
+}
+
+#card-home .logo-container {
+  position: absolute;
+  inset: 0;
+  z-index: 1001;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+#card-home .logo {
+  pointer-events: auto;
+}
+
+/* Card 2: Paneles */
+#card-panels {
+  z-index: 2;
+}
+
+/* Card 3: Collage */
+#card-collage {
+  z-index: 3;
+}
+
+/* Card 4: Contact */
+#card-contact {
+  z-index: 4;
+}
+
+/* Indicadores de Scroll */
+.scroll-indicators {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 1500;
+}
+
+.indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.indicator:hover {
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.indicator.active {
+  background-color: var(--primary-color);
+  transform: scale(1.2);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Asegurar que el footer ocupe toda la card */
+#card-contact .footer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
