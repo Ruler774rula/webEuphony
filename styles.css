@@ -407,17 +407,33 @@ body.contact-page .footer.modal-active { padding-top: 0; padding-bottom: 0; }
 }
 
 .footer-form-container {
-  max-width: 600px;
-  margin: 2rem auto 0;
-  display: none; /* Oculto inicialmente */
-}
-
-.footer-form-container.active {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
-  z-index: 1204;
+  background: rgba(0,0,0,0.6); /* Backdrop */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  z-index: 20;
+}
+
+.footer-form-container.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.footer-content, .social-icons {
+  transition: filter 0.5s ease, opacity 0.5s ease;
+}
+
+.footer-content.blurred, .social-icons.blurred {
+  filter: blur(8px);
+  opacity: 0.4;
+  pointer-events: none;
 }
 
 .social-icons {
@@ -487,12 +503,15 @@ body.contact-page .footer.modal-active { padding-top: 0; padding-bottom: 0; }
   border-radius: 0;
   box-shadow: none;
   padding: 1.5rem 1rem;
-  width: 100%;
+  width: 90%;
   max-width: 540px;
   color: #fff;
   border: none;
   font-family: 'NEXTART', sans-serif;
   margin: 0 auto;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
 }
 .volver-header {
   color: #fff;
@@ -503,8 +522,14 @@ body.contact-page .footer.modal-active { padding-top: 0; padding-bottom: 0; }
 }
 .volver-header:hover { opacity: 0.8; }
 .form-header {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-bottom: 1px solid rgba(255,255,255,0.3);
   margin-bottom: 2rem;
+  padding: 1rem 0;
+  min-height: 60px;
 }
 .form-header h3 {
   color: #fff;
@@ -512,11 +537,51 @@ body.contact-page .footer.modal-active { padding-top: 0; padding-bottom: 0; }
   font-weight: 400;
   letter-spacing: 2px;
   text-transform: uppercase;
+  margin: 0;
+  text-align: center;
+  width: auto;
+  position: static;
+  transform: none;
+  pointer-events: auto;
 }
 .close-btn {
-  color: #fff;
-  font-size: 2rem;
-  font-weight: 300;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  padding: 0;
+  color: transparent; 
+  z-index: 2; /* Asegurar que esté sobre el título */
+}
+.close-btn::before,
+.close-btn::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 1px;
+  background-color: #fff;
+  transition: background-color 0.3s ease;
+}
+.close-btn::before {
+  transform: rotate(45deg);
+}
+.close-btn::after {
+  transform: rotate(-45deg);
+}
+.close-btn:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: #fff;
+  transform: translateY(-50%) rotate(90deg);
 }
 @media (min-width: 1024px) {
   .contact-form {
@@ -735,57 +800,93 @@ form {
     height: 100%;
 }
 
-/* Sección dos paneles: Bodas (izq) y Eventos (der) */
+/* Ajuste para card de dos paneles */
 .two-panels-section {
   width: 100%;
-  position: relative;
+  position: absolute;
+  inset: 0;
   background-color: #000;
-  height: 100%; /* Ajuste para card */
+  height: 100% !important; 
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .two-panels-wrap {
-  width: calc(100vw - clamp(64px, 8vw, 104px));
+  width: 100%;
   max-width: none;
-  margin: 0 auto;
-  padding: 0;
-  position: relative;
-  height: 80vh; /* Altura controlada */
+  margin: 0 !important;
+  padding: 0 !important;
+  position: absolute;
+  inset: 0;
+  height: 100% !important; 
 }
 
 .two-panels {
   width: 100%;
-  height: 100%;
-  min-height: unset; /* Override */
+  height: 100% !important;
+  min-height: 100% !important;
   position: relative;
   isolation: isolate;
   overflow: hidden;
   background: #000;
-
-  /* Control global de la “costura” diagonal (se mueve en hover y mantiene grosor constante) */
-  --seam-shift: 0%; /* - hacia la izquierda, + hacia la derecha */
-  --seam-tilt: 4%; /* diferencia X entre top y bottom para el ángulo */
+  margin: 0 !important;
+  padding: 0 !important;
+  --seam-shift: 0%;
+  --seam-tilt: 4%;
   --seam-top: calc(50% + var(--seam-shift));
   --seam-bot: calc(var(--seam-top) - var(--seam-tilt));
-  --seam-gap: clamp(10px, 1.4vw, 18px); /* espaciado visible constante entre secciones */
+  --seam-gap: clamp(10px, 1.4vw, 18px);
 }
 
 .panel {
   position: absolute;
   inset: 0;
-  min-height: unset; /* Override */
-  height: 100%;
+  min-height: 100%;
+  height: 100% !important;
   display: flex;
   align-items: stretch;
   justify-content: center;
   cursor: pointer;
   overflow: hidden;
+  margin: 0 !important;
+  padding: 0 !important;
   transition: clip-path 800ms ease-in-out, opacity 350ms ease-in-out, filter 800ms ease-in-out;
   -webkit-tap-highlight-color: transparent;
   will-change: clip-path, filter;
   backface-visibility: hidden;
+}
+
+.panel .panel-frame {
+  width: 100%;
+  height: 100% !important;
+  min-height: 100% !important;
+  flex: 1;
+  transform: translate3d(0, 0, 0);
+  transition: transform 800ms ease-in-out, box-shadow 800ms ease-in-out;
+  will-change: transform;
+  backface-visibility: hidden;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Eliminar reglas antiguas de .panel .panel-frame que puedan causar conflicto */
+/* Asegurar que el frame ocupa todo el espacio */
+.two-panels .focus-frame.panel-frame {
+  border-radius: 0;
+  box-shadow: none;
+  height: 100% !important;
+  min-height: 100% !important;
+  max-height: none !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .panel-bodas {
@@ -954,34 +1055,39 @@ form {
   width: calc(100vw - clamp(48px, 6vw, 88px));
   margin: 0 auto;
   position: absolute;
-  bottom: 5vh;
+  top: 60%; /* Subido globalmente para que ambos estén más altos */
   left: 50%;
   transform: translateX(-50%);
   pointer-events: none;
   z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
 }
 
-.two-panels-section.panel-bodas-expanded .panel-text-wrap,
-.two-panels-section.panel-eventos-expanded .panel-text-wrap {
+/* Eliminamos el margen negativo específico de eventos para que se alineen igual */
+.panel-text-eventos {
   margin-top: 0;
-  padding-bottom: 0;
 }
 
 .panel-text {
   display: none;
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0); /* Removed slide effect for stability */
+  transition: opacity 0.5s ease;
 }
 
 .panel-text.visible {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   text-align: center;
   opacity: 1;
   transform: translateY(0);
+  width: 100%;
+  margin: 0;
 }
 
 .two-panels-section.panel-bodas-expanded .panel-text-bodas.visible {
@@ -1056,10 +1162,10 @@ form {
   position: absolute;
   inset: 0;
   width: 100%;
-  height: 140%;
+  height: 100%;
   object-fit: cover;
   display: block;
-  transform: translateY(var(--py, 12%));
+  transform: none;
   opacity: 0;
   filter: blur(10px) saturate(0.95);
   will-change: transform, opacity, filter;
@@ -1083,6 +1189,7 @@ form {
 .two-panels-section.panel-bodas-expanded .panel-bodas .panel-frame > img.panel-img-alt[data-loaded="true"] {
   opacity: 1;
   filter: none;
+  transform: scale(1.05); /* Slight zoom when expanded */
 }
 
 .two-panels-section.panel-eventos-expanded .panel-eventos .panel-frame > img.panel-img-primary {
@@ -1190,21 +1297,19 @@ form {
 
 .text-content {
     height: auto;
-    min-height: 18vh;
+    min-height: auto;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     text-align: center;
     color: white;
-    background-color: transparent; /* Cambiado */
+    background-color: transparent; 
     position: relative;
     z-index: 1;
-    width: calc(100vw - clamp(48px, 6vw, 88px));
+    width: 100%;
     margin: 0 auto;
     padding-inline: clamp(12px, 2.5vw, 24px);
-    content-visibility: auto;
-    contain-intrinsic-size: 18vh;
 }
 
 
@@ -1220,12 +1325,23 @@ form {
 .text-content h2 {
   font-size: clamp(36px, 6.8vw, 36px);
   line-height: 1.3;
+  margin-bottom: 0.5rem;
+  min-height: 2.6em;
+  /* Alineación inferior para que el espacio sobrante quede arriba */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  text-align: center;
+  padding-top: 0;
+  text-shadow: 0 0 8px rgba(0,0,0,0.4), 0 0 8px rgba(0,0,0,0.4), 0 0 8px rgba(0,0,0,0.4), 0 0 8px rgba(0,0,0,0.4);
 }
 
 .text-content p {
   font-size: clamp(18px, 3.6vw, 20px);
   line-height: 2.6;
   max-width: 1024px;
+  text-shadow: 0 0 8px rgba(0,0,0,0.4), 0 0 8px rgba(0,0,0,0.4), 0 0 8px rgba(0,0,0,0.4), 0 0 8px rgba(0,0,0,0.4);
 }
 
 .text-content.visible {
@@ -1250,8 +1366,11 @@ form {
 
 /* Panel frame dentro de .two-panels: mismo estilo que focus-frame */
 .two-panels .focus-frame.panel-frame {
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  border-radius: 0;
+  box-shadow: none;
+  height: 100%;
+  max-height: none;
+  width: 100%;
 }
 
 @media (max-width: 768px) {
@@ -1259,20 +1378,20 @@ form {
     min-height: auto;
   }
   .two-panels {
-    min-height: min(85vh, 90vw);
+    min-height: 100%;
     --seam-gap: clamp(8px, 2.4vw, 14px);
     --seam-tilt: 3%;
   }
   .panel {
-    min-height: min(85vh, 90vw);
+    min-height: 100%;
   }
   .panel .panel-frame {
-    min-height: min(85vh, 90vw);
-    border-radius: 12px;
+    min-height: 100%;
+    border-radius: 0;
   }
   .two-panels-section.panel-bodas-expanded .panel-bodas .panel-frame,
   .two-panels-section.panel-eventos-expanded .panel-eventos .panel-frame {
-    border-radius: 12px;
+    border-radius: 0;
   }
 }
 

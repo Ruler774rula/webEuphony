@@ -46,6 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
     currentIndex = index;
 
     updateIndicators();
+    // Ajustar clases de navbar INMEDIATAMENTE al empezar la transición
+    checkNavbarContrast();
 
     if (direction === 'down') {
       // Nueva card desliza hacia arriba (cubriendo la actual)
@@ -58,10 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
       
       nextCard.style.transform = 'translateY(0)';
       
-      // Efecto parallax en la card anterior (opcional)
-      const prevCard = cards[prevIndex];
-      // prevCard.style.transform = 'scale(0.95)'; // Ejemplo sutil
-      
     } else {
       // Card actual desliza hacia abajo (revelando la anterior)
       const currentCard = cards[prevIndex];
@@ -70,16 +68,12 @@ document.addEventListener('DOMContentLoaded', () => {
       currentCard.classList.remove('active');
       
       const prevCard = cards[currentIndex];
-      // prevCard.style.transform = 'scale(1)'; // Restaurar escala
     }
 
     // Gestionar eventos al terminar la transición
     setTimeout(() => {
       isAnimating = false;
       triggerCardAnimations(currentIndex);
-      
-      // Ajustar clases de navbar si es necesario (ej: dark mode)
-      checkNavbarContrast();
     }, animationDuration);
   }
 
@@ -130,15 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const navbar = document.querySelector('.navbar');
     if (!navbar) return;
     
-    // Card 0 (Video) es oscura, texto blanco (default)
-    // Card 1 (Paneles) es oscura, texto blanco
-    // Card 2 (Collage) es oscura, texto blanco
-    // Card 3 (Footer) es clara o oscura? Fondo negro.
-    
-    // Si alguna sección tuviera fondo claro, aquí cambiaríamos la clase
-    // Por ahora todo es fondo oscuro, así que navbar transparente/blanca está bien.
-    // Solo añadimos fondo negro sólido si no estamos en la home
-    
     if (currentIndex > 0) {
       navbar.classList.add('solid-bg');
     } else {
@@ -156,14 +141,61 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // --- LOGICA DE CONTACTO ---
+  const footerContactBtn = document.getElementById('footerContactBtn');
+  const footerFormContainer = document.getElementById('footerFormContainer');
+  const footerInitialContent = document.getElementById('footerInitialContent');
+  const closeFormBtn = document.getElementById('closeFormBtn');
+  const socialIcons = document.getElementById('socialIcons');
+
+  function toggleContactForm(show) {
+    if (show) {
+      if (footerInitialContent) footerInitialContent.classList.add('blurred');
+      if (socialIcons) socialIcons.classList.add('blurred');
+      if (footerFormContainer) {
+        footerFormContainer.style.display = 'flex';
+        // Small delay for transition
+        requestAnimationFrame(() => {
+            footerFormContainer.classList.add('active');
+        });
+      }
+    } else {
+      if (footerFormContainer) {
+        footerFormContainer.classList.remove('active');
+        setTimeout(() => {
+            if (!footerFormContainer.classList.contains('active')) {
+                footerFormContainer.style.display = 'none';
+            }
+        }, 500); // Match CSS transition duration
+      }
+      if (footerInitialContent) footerInitialContent.classList.remove('blurred');
+      if (socialIcons) socialIcons.classList.remove('blurred');
+    }
+  }
+
+  if (footerContactBtn) {
+    footerContactBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        toggleContactForm(true);
+    });
+  }
+
+  if (closeFormBtn) {
+    closeFormBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        toggleContactForm(false);
+    });
+  }
+
   // Event Listeners
   
   // Wheel
   window.addEventListener('wheel', (e) => {
-    // Si hay un modal abierto (menú, contacto), no scrollear cards
+    // Si hay un modal abierto (menú), no scrollear cards.
+    // Si el formulario está abierto, permitimos scroll SOLO si no es dentro del formulario mismo (para evitar conflicto con scroll interno del form)
     if (document.body.classList.contains('no-scroll') || 
-        document.querySelector('.menu-overlay.open') || 
-        document.querySelector('.footer.modal-active')) return;
+        document.querySelector('.menu-overlay.open') ||
+        e.target.closest('.contact-form')) return;
 
     const now = Date.now();
     if (now - lastScrollTime < scrollCooldown) return;
@@ -185,10 +217,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { passive: true });
 
   window.addEventListener('touchend', (e) => {
-    // Si hay un modal abierto (menú, contacto), no scrollear cards
+    // Si hay un modal abierto (menú), no scrollear cards
+    // Lo mismo para el formulario: si el toque fue dentro del form, no cambiamos de card
     if (document.body.classList.contains('no-scroll') || 
-        document.querySelector('.menu-overlay.open') || 
-        document.querySelector('.footer.modal-active')) return;
+        document.querySelector('.menu-overlay.open') ||
+        e.target.closest('.contact-form')) return;
 
     const touchEndY = e.changedTouches[0].clientY;
     const diff = touchStartY - touchEndY;
@@ -236,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
     discoverBtn.addEventListener('click', () => goToCard(1));
   }
   
-  // Botón Contacta (Navbar) - Ir a última card
+  // Botón Contacta (Navbar) - Ir a última card y abrir form
   const contactBtns = document.querySelectorAll('.contact-toggle, #menuContactLink');
   contactBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -246,7 +279,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (closeMenuBtn && document.getElementById('sideMenu').classList.contains('open')) {
         closeMenuBtn.click();
       }
-      goToCard(totalCards - 1);
+      
+      if (currentIndex === totalCards - 1) {
+          toggleContactForm(true);
+      } else {
+          goToCard(totalCards - 1);
+          setTimeout(() => toggleContactForm(true), 800);
+      }
     });
   });
   

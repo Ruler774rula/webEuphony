@@ -503,6 +503,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  /*
   const footerContactBtn = document.getElementById('footerContactBtn');
   const footerFormContainer = document.getElementById('footerFormContainer');
   const footerEl = document.getElementById('footer');
@@ -654,6 +655,12 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('resize', updateContactToggleVisibility);
   // Inicial
   updateContactToggleVisibility();
+  */
+
+  const menuToggle = document.getElementById('menuToggle');
+  const sideMenu = document.getElementById('sideMenu');
+  const menuOverlay = document.getElementById('menuOverlay');
+  const closeMenuButton = document.getElementById('closeMenuButton');
 
   function openMenu() {
     if (sideMenu) sideMenu.classList.add('open');
@@ -671,14 +678,14 @@ document.addEventListener('DOMContentLoaded', () => {
   if (menuOverlay) {
     menuOverlay.addEventListener('click', closeMenu);
   }
-
-  const closeMenuButton = document.getElementById('closeMenuButton');
   if (closeMenuButton) {
     closeMenuButton.addEventListener('click', closeMenu);
   }
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeMenu();
   });
+
+  /*
   if (menuContactLink) {
     menuContactLink.addEventListener('click', (e) => {
       e.preventDefault();
@@ -706,6 +713,7 @@ document.addEventListener('DOMContentLoaded', () => {
       navigateWithFade('./index.html?top=1');
     });
   }
+  */
 
   const navbar = document.querySelector('.navbar');
   /*
