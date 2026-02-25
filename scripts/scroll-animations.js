@@ -1,4 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Guard: si GSAP no ha cargado (fallo de CDN) ocultamos el loader y salimos
+  if (typeof gsap === 'undefined') {
+    const loader = document.getElementById('loader');
+    if (loader) { loader.style.opacity = '0'; loader.style.display = 'none'; }
+    return;
+  }
+
   const video = document.getElementById('bg-video');
   const videoSpacer = document.querySelector('.video-spacer');
   const logo = document.querySelector('.logo');
@@ -32,14 +39,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) && !/CriOS|FxiOS/i.test(navigator.userAgent);
-  if (isIOS) {
-    document.querySelectorAll('.image-container, .collage-row').forEach((el) => {
-      el.style.contentVisibility = 'visible';
-    });
-  }
+  // Safari en macOS también puede tener problemas con content-visibility en elementos animados
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   const isAndroidChrome = /Android/i.test(navigator.userAgent) && /Chrome/i.test(navigator.userAgent);
-  if (isAndroidChrome) {
-    document.querySelectorAll('.image-container, .collage-row').forEach((el) => {
+
+  if (isIOS || isSafari || isAndroidChrome) {
+    document.querySelectorAll('.image-container, .collage-row, .collage-track').forEach((el) => {
       el.style.contentVisibility = 'visible';
     });
   }
@@ -125,8 +130,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Ocultar el prompt "Descubrir más" en cuanto se inicia el primer scroll; reaparece solo al volver al top
   const discoverPrompt = document.getElementById('discoverPrompt');
-  if (!isContact && discoverPrompt) {
-    // Si la página no está en el tope al cargar, mantener oculto
+  const isCardSystem = !!document.getElementById('card-scroll-container');
+
+  if (!isContact && discoverPrompt && !isCardSystem) {
+    // Solo en páginas SIN el sistema de cards (scroll tradicional)
     if (window.scrollY > 0) {
       gsap.set(discoverPrompt, { autoAlpha: 0 });
     }
@@ -153,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const navH = nav ? nav.offsetHeight : 0;
       const rect = target.getBoundingClientRect();
       const topAbs = rect.top + window.pageYOffset;
-      const vh = window.innerHeight;
       const y = Math.max(0, topAbs - navH - 24);
       window.scrollTo({ top: y, behavior: 'smooth' });
     });
@@ -177,11 +183,14 @@ document.addEventListener('DOMContentLoaded', () => {
     measureSectionTop();
     window.addEventListener('resize', measureSectionTop, { passive: true });
 
+    const PANEL_EXPAND_MS = 800;   /* coincide con transition del panel (clip-path) */
+    const PANEL_TEXT_FADEOUT_MS = 400;
+
     function collapsePanels() {
       twoPanelsSection.classList.remove('panel-bodas-expanded', 'panel-eventos-expanded');
       twoPanelsSection.classList.remove('is-hover-bodas', 'is-hover-eventos');
-      panelTextBodas && panelTextBodas.classList.remove('visible');
-      panelTextEventos && panelTextEventos.classList.remove('visible');
+      panelTextBodas && panelTextBodas.classList.remove('visible', 'panel-text-closing', 'panel-text-appearing');
+      panelTextEventos && panelTextEventos.classList.remove('visible', 'panel-text-closing', 'panel-text-appearing');
       panelTextBodas && panelTextBodas.setAttribute('aria-hidden', 'true');
       panelTextEventos && panelTextEventos.setAttribute('aria-hidden', 'true');
       panelBodas && panelBodas.setAttribute('aria-expanded', 'false');
@@ -190,8 +199,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function setExpanded(panel) {
       twoPanelsSection.classList.remove('panel-bodas-expanded', 'panel-eventos-expanded');
-      panelTextBodas && panelTextBodas.classList.remove('visible');
-      panelTextEventos && panelTextEventos.classList.remove('visible');
+      panelTextBodas && panelTextBodas.classList.remove('visible', 'panel-text-closing', 'panel-text-appearing');
+      panelTextEventos && panelTextEventos.classList.remove('visible', 'panel-text-closing', 'panel-text-appearing');
       panelTextBodas && panelTextBodas.setAttribute('aria-hidden', 'true');
       panelTextEventos && panelTextEventos.setAttribute('aria-hidden', 'true');
       panelBodas && panelBodas.setAttribute('aria-expanded', 'false');
@@ -200,21 +209,65 @@ document.addEventListener('DOMContentLoaded', () => {
       if (panel === panelBodas) {
         twoPanelsSection.classList.add('panel-bodas-expanded');
         panelBodas.setAttribute('aria-expanded', 'true');
-        panelTextBodas && panelTextBodas.classList.add('visible');
-        panelTextBodas && panelTextBodas.setAttribute('aria-hidden', 'false');
+        /* Tras la expansión: mostrar texto primero difuminado, luego animar a nítido */
+        setTimeout(() => {
+          if (panelTextBodas && twoPanelsSection.classList.contains('panel-bodas-expanded')) {
+            panelTextBodas.setAttribute('aria-hidden', 'false');
+            panelTextBodas.classList.add('panel-text-appearing');
+            panelTextBodas.offsetHeight; /* reflow para pintar el estado difuminado */
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                if (panelTextBodas.classList.contains('panel-text-appearing')) {
+                  panelTextBodas.classList.remove('panel-text-appearing');
+                  panelTextBodas.classList.add('visible');
+                }
+              });
+            });
+          }
+        }, PANEL_EXPAND_MS);
       } else {
         twoPanelsSection.classList.add('panel-eventos-expanded');
         panelEventos.setAttribute('aria-expanded', 'true');
-        panelTextEventos && panelTextEventos.classList.add('visible');
-        panelTextEventos && panelTextEventos.setAttribute('aria-hidden', 'false');
+        setTimeout(() => {
+          if (panelTextEventos && twoPanelsSection.classList.contains('panel-eventos-expanded')) {
+            panelTextEventos.setAttribute('aria-hidden', 'false');
+            panelTextEventos.classList.add('panel-text-appearing');
+            panelTextEventos.offsetHeight; /* reflow para pintar el estado difuminado */
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                if (panelTextEventos.classList.contains('panel-text-appearing')) {
+                  panelTextEventos.classList.remove('panel-text-appearing');
+                  panelTextEventos.classList.add('visible');
+                }
+              });
+            });
+          }
+        }, PANEL_EXPAND_MS);
       }
+    }
+
+    function collapseAfterTextFadeOut(activeTextEl) {
+      if (!activeTextEl) {
+        collapsePanels();
+        return;
+      }
+      activeTextEl.classList.add('panel-text-closing');
+      activeTextEl.classList.remove('visible');
+      const onDone = () => {
+        activeTextEl.removeEventListener('transitionend', onDone);
+        activeTextEl.classList.remove('panel-text-closing');
+        collapsePanels();
+      };
+      activeTextEl.addEventListener('transitionend', onDone);
+      setTimeout(onDone, PANEL_TEXT_FADEOUT_MS + 50);
     }
 
     function handlePanelClick(clickedPanel) {
       const isBodas = clickedPanel === panelBodas;
       const alreadyExpanded = twoPanelsSection.classList.contains(isBodas ? 'panel-bodas-expanded' : 'panel-eventos-expanded');
       if (alreadyExpanded) {
-        collapsePanels();
+        const activeText = isBodas ? panelTextBodas : panelTextEventos;
+        collapseAfterTextFadeOut(activeText);
         return;
       }
       setExpanded(clickedPanel);
@@ -573,8 +626,15 @@ document.addEventListener('DOMContentLoaded', () => {
   if (menuHomeLink) {
     menuHomeLink.addEventListener('click', (e) => {
       e.preventDefault();
-      closeMenu();
-      navigateWithFade('./index.html?top=1');
+      if (document.getElementById('card-scroll-container')) {
+        // En index.html: card-system.js gestiona la navegación a la card 0.
+        // Solo cerramos el menú aquí; el otro handler hace el resto.
+        closeMenu();
+      } else {
+        // En otras páginas: navegar a index con fade
+        closeMenu();
+        navigateWithFade('./index.html?top=1');
+      }
     });
   }
 
@@ -586,15 +646,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
-  const navbar = document.querySelector('.navbar');
-  const firstScrollTrigger = document.querySelector('.two-panels-section') || document.querySelector('.image-container');
-  if (navbar && firstScrollTrigger) {
-    ScrollTrigger.create({
-      trigger: firstScrollTrigger,
-      start: 'top top',
-      onEnter: () => navbar.classList.add('dark'),
-      onLeaveBack: () => navbar.classList.remove('dark')
-    });
+  // ScrollTrigger para navbar omitido en el sistema de cards:
+  // el body no hace scroll, por lo que los triggers nunca se disparan.
+  // La clase de contraste de la navbar la gestiona card-system.js (checkNavbarContrast).
+  if (!isCardSystem) {
+    const navbar = document.querySelector('.navbar');
+    const firstScrollTrigger = document.querySelector('.two-panels-section') || document.querySelector('.image-container');
+    if (navbar && firstScrollTrigger) {
+      ScrollTrigger.create({
+        trigger: firstScrollTrigger,
+        start: 'top top',
+        onEnter: () => navbar.classList.add('dark'),
+        onLeaveBack: () => navbar.classList.remove('dark')
+      });
+    }
   }
 
 });

@@ -3,10 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
   <title>Euphony - Bodas & Eventos</title>
+  <!-- Preconnect para reducir latencia en la carga de recursos externos -->
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preload" as="image" href="imagenes/pexels-bertellifotografia-29486087_resultado.webp" fetchpriority="high">
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <link rel="preload" as="image" href="imagenes/pexels-bertellifotografia-29486087_resultado.webp" fetchpriority="high">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <link rel="stylesheet" href="./styles.css">
 </head>
@@ -51,8 +54,8 @@
   <!-- Side Menu -->
   <aside class="side-menu" id="sideMenu" aria-label="Menú lateral">
     <div class="side-menu-header">
-      Menú
-      <button class="close-menu-button" id="closeMenuButton" aria-label="Cerrar menú">◣</button>
+      <span>Menú</span>
+      <button class="close-menu-button" id="closeMenuButton" aria-label="Cerrar menú"></button>
     </div>
     <ul class="side-menu-list">
       <li><a href="./index.html" class="side-menu-link" id="menuHomeLink">Inicio</a></li>
