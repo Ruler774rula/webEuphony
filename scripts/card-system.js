@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Ir a una card específica
-  function goToCard(index) {
+  function goToCard(index, immediateForm = false) {
     if (index < 0 || index >= totalCards || index === currentIndex || isAnimating) return;
 
     isAnimating = true;
@@ -48,6 +48,28 @@ document.addEventListener('DOMContentLoaded', () => {
     updateIndicators();
     // Ajustar clases de navbar INMEDIATAMENTE al empezar la transición
     checkNavbarContrast();
+
+    // Función auxiliar para actualizar cards intermedias sin animación
+    const updateIntermediates = () => {
+      cards.forEach((card, i) => {
+        // No tocar la card actual ni la previa en este bucle, ellas tienen su propia animación
+        if (i !== currentIndex && i !== prevIndex) {
+          card.style.transition = 'none';
+          if (i < currentIndex) {
+            card.style.transform = 'translateY(0)';
+            card.classList.add('active');
+          } else {
+            card.style.transform = 'translateY(100%)';
+            card.classList.remove('active');
+          }
+        }
+      });
+    };
+
+    if (direction === 'up') {
+      // Si subimos (volvemos atrás), escondemos las intermedias ANTES para que al quitar la superior se vea la destino
+      updateIntermediates();
+    }
 
     if (direction === 'down') {
       // Nueva card desliza hacia arriba (cubriendo la actual)
@@ -66,19 +88,21 @@ document.addEventListener('DOMContentLoaded', () => {
       currentCard.style.transition = `transform ${animationDuration/1000}s cubic-bezier(0.65, 0, 0.35, 1)`;
       currentCard.style.transform = 'translateY(100%)';
       currentCard.classList.remove('active');
-      
-      const prevCard = cards[currentIndex];
     }
 
     // Gestionar eventos al terminar la transición
     setTimeout(() => {
+      if (direction === 'down') {
+        // Si bajamos (avanzamos), actualizamos las intermedias AHORA (que ya están tapadas)
+        updateIntermediates();
+      }
       isAnimating = false;
-      triggerCardAnimations(currentIndex);
+      triggerCardAnimations(currentIndex, immediateForm);
     }, animationDuration);
   }
 
   // Trigger animaciones específicas por card
-  function triggerCardAnimations(index) {
+  function triggerCardAnimations(index, immediateForm = false) {
     // Resetear animaciones de otras cards si es necesario
     
     // Card 1: Video & Logo
@@ -117,6 +141,27 @@ document.addEventListener('DOMContentLoaded', () => {
       // Asegurar que marquee corre
       const rows = document.querySelectorAll('.collage-row');
       rows.forEach(row => row.style.animationPlayState = 'running');
+    }
+
+    // Card 4: Contacto
+    if (index === 3) {
+      const intro = document.getElementById('contactIntro');
+      const form = document.getElementById('contactFormContainer');
+      if (intro && form) {
+        // Remover clases de transición previas para evitar conflictos
+        intro.classList.remove('active', 'hidden');
+        form.classList.remove('active', 'hidden');
+
+        if (immediateForm) {
+          // Mostrar formulario directamente
+          form.classList.add('active');
+          intro.classList.add('hidden'); // Asegurar que intro esté oculta
+        } else {
+          // Mostrar intro por defecto (navegación scroll)
+          intro.classList.add('active');
+          form.classList.add('hidden'); // Asegurar que form esté oculto
+        }
+      }
     }
   }
 
@@ -237,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
         closeMenuBtn.click();
       }
       
-      goToCard(totalCards - 1);
+      goToCard(totalCards - 1, true); // true para mostrar formulario directamente
     });
   });
   
@@ -251,6 +296,35 @@ document.addEventListener('DOMContentLoaded', () => {
         closeMenuBtn.click();
       }
       goToCard(0);
+    });
+  }
+
+  // Lógica interna de la sección Contacto (Intro <-> Form)
+  const showFormBtn = document.getElementById('showContactFormBtn');
+  const closeFormBtn = document.getElementById('closeContactFormBtn');
+  const contactIntro = document.getElementById('contactIntro');
+  const contactFormContainer = document.getElementById('contactFormContainer');
+
+  if (showFormBtn && contactIntro && contactFormContainer) {
+    showFormBtn.addEventListener('click', () => {
+      // 1. Iniciar salida de la intro
+      contactIntro.classList.remove('active');
+      
+      // 2. Esperar un poco antes de activar el formulario para que se note la transición
+      setTimeout(() => {
+        contactFormContainer.classList.remove('hidden'); // Asegurar que no tenga hidden
+        contactFormContainer.classList.add('active');
+      }, 300); 
+    });
+  }
+
+  if (closeFormBtn && contactIntro && contactFormContainer) {
+    closeFormBtn.addEventListener('click', () => {
+      contactFormContainer.classList.remove('active');
+      setTimeout(() => {
+        contactIntro.classList.remove('hidden'); // Asegurar que no tenga hidden
+        contactIntro.classList.add('active');
+      }, 300);
     });
   }
 

@@ -109,7 +109,7 @@
             </div>
             <div class="panel panel-eventos" id="panelEventos" data-panel="eventos" role="button" tabindex="0" aria-expanded="false" aria-label="Ver Eventos">
               <div class="focus-frame panel-frame">
-                <img class="panel-img panel-img-primary" src="imagenes/pexels-bertellifotografia-29486087_resultado.webp" alt="Eventos" decoding="async" fetchpriority="high" loading="eager">
+                <img class="panel-img panel-img-primary" src="imagenes/Low/pexels-wendywei-1677710_resultado.webp" alt="Eventos" decoding="async" fetchpriority="high" loading="eager">
                 <img class="panel-img panel-img-alt" src="imagenes/Low/pexels-gustavo-trotta-300282193-14470108_resultado.webp" alt="" aria-hidden="true" decoding="async" loading="lazy">
                 <div class="frame-label inverse">Corporate <br class="mobile-break">& Events</div>
               </div>
@@ -156,31 +156,40 @@
       <div class="contact-bg"></div>
       
       <div class="contact-card-wrapper">
-        <div class="contact-card glass">
+        <!-- INTRODUCCIÓN (Nuevo) -->
+        <div class="contact-intro" id="contactIntro">
+            <h2>Contacta con nosotros</h2>
+            <p>¿Tienes alguna duda o quieres empezar a planificar tu evento? Estamos aquí para escucharte y hacer realidad tu visión.</p>
+            <button id="showContactFormBtn" class="cta-button">Contactar</button>
+        </div>
+
+        <!-- FORMULARIO (Existente, oculto inicialmente) -->
+        <div class="contact-card glass hidden" id="contactFormContainer">
           <div class="contact-form">
             <div class="form-header">
               <h3>Contacta con nosotros</h3>
+              <button class="close-btn" id="closeContactFormBtn" aria-label="Cerrar formulario"></button>
             </div>
 
             <form id="contactFormElement">
               <div class="form-group">
                 <label for="nombre">Nombre <span class="req">*</span></label>
-                <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre completo">
+                <input type="text" id="nombre" name="nombre" required>
               </div>
 
               <div class="form-group">
                 <label for="email">Email <span class="req">*</span></label>
-                <input type="email" id="email" name="email" required placeholder="ejemplo@correo.com">
+                <input type="email" id="email" name="email" required>
               </div>
 
               <div class="form-group">
                 <label for="telefono">Número de teléfono <span class="req">*</span></label>
-                <input type="tel" id="telefono" name="telefono" required placeholder="+34 600 000 000">
+                <input type="tel" id="telefono" name="telefono" required>
               </div>
 
               <div class="form-group">
                 <label for="servicio">Servicio de interés <span class="req">*</span></label>
-                <textarea id="servicio" name="servicio" rows="4" placeholder="Describe el servicio de interés" required></textarea>
+                <textarea id="servicio" name="servicio" rows="4" required></textarea>
               </div>
 
               <button type="submit" class="submit-btn" disabled>Enviar</button>
