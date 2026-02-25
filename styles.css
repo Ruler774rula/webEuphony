@@ -831,6 +831,55 @@ form {
   letter-spacing: 0.5px;
 }
 
+/* Phone Input Group with Country Selector */
+.phone-input-group {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+  width: 100%; /* Asegurar que ocupe todo el ancho disponible */
+}
+
+.country-select {
+  flex: 0 0 auto; /* No crecer ni encoger */
+  width: auto;
+  max-width: 90px; /* Reducido para ser más compacto */
+  padding: 12px 24px 12px 10px; /* Reducido padding derecho e izquierdo */
+  border: 1px solid #fff;
+  border-radius: 8px;
+  font-size: 0.95rem; /* Ligeramente más pequeño */
+  background: transparent;
+  color: #fff;
+  font-family: 'NEXTART', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 6px center; /* Ajustado */
+  background-size: 12px; /* Flecha más pequeña */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.country-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+  transform: translateY(-2px);
+}
+
+.country-select option {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.phone-input-group input[type="tel"] {
+  flex: 1; /* Ocupar todo el espacio restante */
+  min-width: 0; /* Permitir encoger si es necesario */
+}
+
 .form-group input,
 .form-group select,
 .form-group textarea {

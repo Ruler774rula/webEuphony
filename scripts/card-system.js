@@ -36,6 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
     triggerCardAnimations(0);
   }
 
+  // Estado para controlar si el formulario debe mostrarse por defecto
+  let isContactFormActive = false;
+
   // Ir a una card específica
   function goToCard(index, immediateForm = false) {
     if (index < 0 || index >= totalCards || index === currentIndex || isAnimating) return;
@@ -44,6 +47,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const direction = index > currentIndex ? 'down' : 'up';
     const prevIndex = currentIndex;
     currentIndex = index;
+
+    // Si vamos a la card de contacto y se pide immediateForm, actualizamos el estado
+    if (index === 3 && immediateForm) {
+      isContactFormActive = true;
+    }
 
     updateIndicators();
     // Ajustar clases de navbar INMEDIATAMENTE al empezar la transición
@@ -97,12 +105,12 @@ document.addEventListener('DOMContentLoaded', () => {
         updateIntermediates();
       }
       isAnimating = false;
-      triggerCardAnimations(currentIndex, immediateForm);
+      triggerCardAnimations(currentIndex);
     }, animationDuration);
   }
 
   // Trigger animaciones específicas por card
-  function triggerCardAnimations(index, immediateForm = false) {
+  function triggerCardAnimations(index) {
     // Resetear animaciones de otras cards si es necesario
     
     // Card 1: Video & Logo
@@ -152,12 +160,12 @@ document.addEventListener('DOMContentLoaded', () => {
         intro.classList.remove('active', 'hidden');
         form.classList.remove('active', 'hidden');
 
-        if (immediateForm) {
-          // Mostrar formulario directamente
+        if (isContactFormActive) {
+          // Mostrar formulario directamente si el estado lo indica
           form.classList.add('active');
           intro.classList.add('hidden'); // Asegurar que intro esté oculta
         } else {
-          // Mostrar intro por defecto (navegación scroll)
+          // Mostrar intro por defecto (si nunca se activó el form)
           intro.classList.add('active');
           form.classList.add('hidden'); // Asegurar que form esté oculto
         }
@@ -307,6 +315,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (showFormBtn && contactIntro && contactFormContainer) {
     showFormBtn.addEventListener('click', () => {
+      // Activar estado persistente
+      isContactFormActive = true;
+      
       // 1. Iniciar salida de la intro
       contactIntro.classList.remove('active');
       
@@ -320,6 +331,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (closeFormBtn && contactIntro && contactFormContainer) {
     closeFormBtn.addEventListener('click', () => {
+      // Desactivar estado persistente
+      isContactFormActive = false;
+      
       contactFormContainer.classList.remove('active');
       setTimeout(() => {
         contactIntro.classList.remove('hidden'); // Asegurar que no tenga hidden
