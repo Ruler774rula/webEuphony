@@ -142,50 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- LOGICA DE CONTACTO ---
-  const footerContactBtn = document.getElementById('footerContactBtn');
-  const footerFormContainer = document.getElementById('footerFormContainer');
-  const footerInitialContent = document.getElementById('footerInitialContent');
-  const closeFormBtn = document.getElementById('closeFormBtn');
-  const socialIcons = document.getElementById('socialIcons');
-
-  function toggleContactForm(show) {
-    if (show) {
-      if (footerInitialContent) footerInitialContent.classList.add('blurred');
-      if (socialIcons) socialIcons.classList.add('blurred');
-      if (footerFormContainer) {
-        footerFormContainer.style.display = 'flex';
-        // Small delay for transition
-        requestAnimationFrame(() => {
-            footerFormContainer.classList.add('active');
-        });
-      }
-    } else {
-      if (footerFormContainer) {
-        footerFormContainer.classList.remove('active');
-        setTimeout(() => {
-            if (!footerFormContainer.classList.contains('active')) {
-                footerFormContainer.style.display = 'none';
-            }
-        }, 500); // Match CSS transition duration
-      }
-      if (footerInitialContent) footerInitialContent.classList.remove('blurred');
-      if (socialIcons) socialIcons.classList.remove('blurred');
-    }
-  }
-
-  if (footerContactBtn) {
-    footerContactBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        toggleContactForm(true);
-    });
-  }
-
-  if (closeFormBtn) {
-    closeFormBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        toggleContactForm(false);
-    });
-  }
+  // Se ha simplificado: el formulario siempre es visible en la última card.
 
   // Event Listeners
   
@@ -269,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
     discoverBtn.addEventListener('click', () => goToCard(1));
   }
   
-  // Botón Contacta (Navbar) - Ir a última card y abrir form
+  // Botón Contacta (Navbar) - Ir a última card
   const contactBtns = document.querySelectorAll('.contact-toggle, #menuContactLink');
   contactBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -280,12 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
         closeMenuBtn.click();
       }
       
-      if (currentIndex === totalCards - 1) {
-          toggleContactForm(true);
-      } else {
-          goToCard(totalCards - 1);
-          setTimeout(() => toggleContactForm(true), 800);
-      }
+      goToCard(totalCards - 1);
     });
   });
   

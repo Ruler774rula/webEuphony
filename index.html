@@ -151,42 +151,36 @@
       </div>
     </section>
 
-    <!-- CARD 4: CONTACTO (FOOTER) -->
+    <!-- CARD 4: CONTACTO -->
     <section class="card-section" id="card-contact">
-      <footer class="footer" id="footer">
-        <div class="footer-content" id="footerInitialContent">
-          <h3>¿Listo para crear tu evento?</h3>
-          <p>Contacta con nosotros y comencemos a planificar tu día especial</p>
-          <button class="footer-contact-btn" id="footerContactBtn">CONTACTA</button>
-        </div>
-        
-        <!-- Form Container -->
-        <div class="footer-form-container" id="footerFormContainer">
+      <div class="contact-bg"></div>
+      
+      <div class="contact-card-wrapper">
+        <div class="contact-card glass">
           <div class="contact-form">
             <div class="form-header">
               <h3>Contacta con nosotros</h3>
-              <button class="close-btn" id="closeFormBtn" aria-label="Cerrar formulario"></button>
             </div>
 
             <form id="contactFormElement">
               <div class="form-group">
                 <label for="nombre">Nombre <span class="req">*</span></label>
-                <input type="text" id="nombre" name="nombre" required>
+                <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre completo">
               </div>
 
               <div class="form-group">
                 <label for="email">Email <span class="req">*</span></label>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" name="email" required placeholder="ejemplo@correo.com">
               </div>
 
               <div class="form-group">
                 <label for="telefono">Número de teléfono <span class="req">*</span></label>
-                <input type="tel" id="telefono" name="telefono" required>
+                <input type="tel" id="telefono" name="telefono" required placeholder="+34 600 000 000">
               </div>
 
               <div class="form-group">
                 <label for="servicio">Servicio de interés <span class="req">*</span></label>
-                <textarea id="servicio" name="servicio" rows="4" required></textarea>
+                <textarea id="servicio" name="servicio" rows="4" placeholder="Describe el servicio de interés" required></textarea>
               </div>
 
               <button type="submit" class="submit-btn" disabled>Enviar</button>
@@ -196,15 +190,15 @@
               <h3>¡Gracias por contactarnos!</h3>
               <p>Nos pondremos en contacto contigo pronto.</p>
             </div>
+
+            <div class="contact-social-icons">
+              <a href="#" aria-label="Facebook"><img src="./icons/icons8-facebook-100.png" alt="Facebook"></a>
+              <a href="#" aria-label="Instagram"><img src="./icons/icons8-instagram-100.png" alt="Instagram"></a>
+              <a href="#" aria-label="WhatsApp"><img src="./icons/icons8-whatsapp-100.png" alt="WhatsApp"></a>
+            </div>
           </div>
         </div>
-        
-        <div class="social-icons" id="socialIcons">
-          <img src="./icons/icons8-facebook-100.png" alt="Facebook" loading="lazy" decoding="async" fetchpriority="low">
-          <img src="./icons/icons8-instagram-100.png" alt="Instagram" loading="lazy" decoding="async" fetchpriority="low">
-          <img src="./icons/icons8-whatsapp-100.png" alt="WhatsApp" loading="lazy" decoding="async" fetchpriority="low">
-        </div>
-      </footer>
+      </div>
     </section>
 
   </main>
@@ -221,5 +215,6 @@
   <script defer src="./scripts/scroll-animations.js"></script>
   <!-- Nuevo script para el sistema de cards -->
   <script defer src="./scripts/card-system.js"></script>
+  <script defer src="./scripts/contact-form.js"></script>
 </body>
 </html>
