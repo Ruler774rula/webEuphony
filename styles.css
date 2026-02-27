@@ -475,7 +475,7 @@ body.contact-page .logo { display: none; }
   height: 100%;
   display: grid;
   place-items: center;
-  padding: 20px;
+  padding: 20px 20px 10px;
 }
 
 /* Estilos específicos para la página de contacto mejorada (contacta.html) */
@@ -506,7 +506,7 @@ body.contact-page .logo { display: none; }
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 80px 20px 40px;
+  padding: 80px 20px 15px;
   position: relative;
   z-index: 10;
   opacity: 0; /* Animado por JS */
@@ -521,7 +521,8 @@ body.contact-page .logo { display: none; }
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
-  padding: 40px;
+  --contact-card-pad: 40px;
+  padding: var(--contact-card-pad);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
   
   /* Posicionamiento para superposición en Grid */
@@ -534,11 +535,29 @@ body.contact-page .logo { display: none; }
   filter: blur(10px);
   pointer-events: none;
   
+  /* Permitir scroll en la propia tarjeta en móvil/tablet */
+  max-height: calc(100dvh - 140px); /* Margen superior e inferior aumentado para reducir altura */
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.6) rgba(255, 255, 255, 0.08);
+  
   /* Transición suave */
   transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
               transform 0.6s cubic-bezier(0.4, 0, 0.2, 1),
               filter 0.6s cubic-bezier(0.4, 0, 0.2, 1),
               visibility 0.6s step-end; /* Delay visibility hidden until fade out done */
+}
+
+/* Scrollbar para la tarjeta */
+.contact-card::-webkit-scrollbar {
+  width: 6px;
+}
+.contact-card::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+.contact-card::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
 }
 
 /* Clase activa para mostrar */
@@ -654,12 +673,46 @@ body.contact-page .logo { display: none; }
 
 .contact-card .contact-form {
   background: transparent;
-  padding: 0;
-  width: 100%;
-  max-width: 100%;
+  width: calc(100% + (var(--contact-card-pad, 40px) * 2));
+  max-width: none;
+  margin: calc(var(--contact-card-pad, 40px) * -1);
+  padding: var(--contact-card-pad, 40px);
   max-height: none;
   box-shadow: none;
-  overflow: visible;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.55) rgba(255, 255, 255, 0.08);
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.contact-card .contact-form::-webkit-scrollbar {
+  width: 10px;
+}
+
+.contact-card .contact-form::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.contact-card .contact-form::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.45),
+    rgba(212, 175, 55, 0.75)
+  );
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.contact-card .contact-form::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.6),
+    rgba(212, 175, 55, 0.9)
+  );
 }
 
 .contact-card .form-header {
@@ -715,11 +768,12 @@ body.contact-page .logo { display: none; }
 
 @media (max-width: 768px) {
   .contact-card {
-    padding: 25px;
-    margin-top: 20px;
+    --contact-card-pad: 18px;
+    padding: var(--contact-card-pad);
+    margin-top: 15px;
   }
   .contact-card .form-header h3 {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
   }
 }
 
@@ -734,9 +788,56 @@ body.contact-page .logo { display: none; }
   border: none;
   font-family: 'NEXTART', sans-serif;
   margin: 0 auto;
-  max-height: 90vh;
-  overflow-y: auto;
+  max-height: none; /* Altura controlada por la card */
+  overflow-y: visible;
   position: relative;
+}
+
+.contact-form::-webkit-scrollbar {
+  width: 8px;
+}
+
+.contact-form::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+}
+
+.contact-form::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 999px;
+}
+
+@media (max-height: 620px) {
+  #card-contact .contact-card-wrapper {
+    place-items: start center;
+    padding-top: calc(var(--nav-h, 72px) + 10px);
+    padding-bottom: 6px;
+  }
+
+  #card-contact .contact-card {
+    max-height: calc(100dvh - (var(--nav-h, 72px) + 24px));
+    overflow: hidden;
+  }
+
+  #card-contact .contact-card .contact-form {
+    max-height: calc(100dvh - (var(--nav-h, 72px) + 120px));
+    overflow-y: auto;
+  }
+
+  .contact-page-container {
+    padding-top: calc(var(--nav-h, 72px) + 10px);
+    padding-bottom: 6px;
+  }
+
+  .contact-page-container .contact-card {
+    max-height: calc(100dvh - (var(--nav-h, 72px) + 24px));
+    overflow: hidden;
+  }
+
+  .contact-page-container .contact-form {
+    max-height: calc(100dvh - (var(--nav-h, 72px) + 120px));
+    overflow-y: auto;
+  }
 }
 .volver-header {
   color: #fff;
@@ -808,10 +909,192 @@ body.contact-page .logo { display: none; }
   border-color: #fff;
   transform: translateY(-50%) rotate(90deg);
 }
-@media (min-width: 1024px) {
+@media (min-width: 1280px) {
+  /* Contenedor más ancho en desktop pero con altura contenida */
+  .contact-card {
+    max-width: 1100px;
+    width: 90%;
+    padding: 2.5rem 3rem;
+    max-height: 90vh; /* Altura máxima para desktop */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Ocultar desbordamiento del contenedor */
+  }
+
   .contact-form {
-    max-width: 640px;
-    padding: 1.75rem 1.25rem;
+    max-width: 100%;
+    padding: 0;
+    overflow: hidden; /* Sin scroll en el contenedor intermedio */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Resetear regla específica */
+  .contact-card .contact-form {
+    overflow: hidden; /* Sin scroll aquí tampoco */
+    max-height: none;
+  }
+
+  /* Header más compacto y fijo */
+  .contact-card .form-header {
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    flex-shrink: 0;
+  }
+  
+  .contact-card .form-header h3 {
+    font-size: 1.8rem;
+  }
+
+  /* Scroll EXCLUSIVAMENTE en el formulario */
+  form#contactFormElement {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* Scroll funcional */
+    padding-right: 10px; /* Espacio para scrollbar */
+  }
+
+  /* Scrollbar visible y usable */
+  form#contactFormElement::-webkit-scrollbar {
+    width: 8px;
+    display: block;
+  }
+  form#contactFormElement::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+  }
+  form#contactFormElement::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 4px;
+  }
+  form#contactFormElement::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.6);
+  }
+
+  .form-group-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: stretch;
+    flex-shrink: 0; /* No encoger el contenido del grid */
+  }
+
+
+  /* Columna Izquierda */
+  .form-left-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 15px; /* Espacio uniforme entre inputs */
+  }
+
+  /* Columna Derecha */
+  .form-right-col {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .form-right-col .form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0;
+  }
+
+  .form-right-col textarea {
+    flex: 1;
+    height: 100%;
+    min-height: 150px; /* Altura mínima para asegurar usabilidad */
+    resize: none;
+    padding: 12px; /* Padding interno del textarea */
+  }
+
+  /* Botón de enviar con más margen superior */
+  .contact-card .submit-btn {
+    grid-column: 1 / -1;
+    margin-top: 3.25rem; /* Margen superior considerable */
+    width: 100%;
+    max-width: 250px; /* Botón más compacto */
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    padding: 0.8rem;
+    flex-shrink: 0; /* No encoger el botón */
+  }
+  
+  /* Inputs más compactos */
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 10px;
+    font-size: 0.95rem;
+  }
+
+  .form-group label {
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+  }
+  
+  /* Reset de márgenes en inputs dentro del wrapper */
+  .form-left-col .form-group {
+    margin-bottom: 0;
+  }
+}
+
+/* Iconos sociales globales (fuera del form) */
+.global-social-icons {
+  position: absolute;
+  bottom: 15px; /* Más pegado abajo */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 15px; /* Menos espacio entre iconos */
+  z-index: 20;
+  pointer-events: auto;
+}
+
+.global-social-icons img {
+  width: 28px; /* Iconos más pequeños */
+  height: 28px;
+  filter: brightness(0) invert(1);
+  opacity: 0.7;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.global-social-icons img:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Ajustes para que no se pisen con el formulario en móvil */
+@media (max-width: 1023px) {
+  #card-contact .contact-card-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .global-social-icons {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    margin-top: 15px;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+}
+
+@media (min-width: 1280px) {
+  /* Asegurar que el form deje espacio para los iconos */
+  .contact-card {
+    padding-bottom: 3.5rem; /* Espacio extra abajo */
+    max-height: 85vh; /* Reducir un poco la altura máxima */
   }
 }
 

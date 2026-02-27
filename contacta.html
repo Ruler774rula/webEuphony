@@ -60,24 +60,30 @@
           </div>
 
           <form id="contactFormElement">
-            <div class="form-group">
-              <label for="nombre">Nombre <span class="req">*</span></label>
-              <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre completo">
-            </div>
+            <div class="form-group-wrapper">
+              <div class="form-left-col">
+                <div class="form-group">
+                  <label for="nombre">Nombre <span class="req">*</span></label>
+                  <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre completo">
+                </div>
 
-            <div class="form-group">
-              <label for="email">Email <span class="req">*</span></label>
-              <input type="email" id="email" name="email" required placeholder="ejemplo@correo.com">
-            </div>
+                <div class="form-group">
+                  <label for="email">Email <span class="req">*</span></label>
+                  <input type="email" id="email" name="email" required placeholder="ejemplo@correo.com">
+                </div>
 
-            <div class="form-group">
-              <label for="telefono">Número de teléfono <span class="req">*</span></label>
-              <input type="tel" id="telefono" name="telefono" required placeholder="+34 600 000 000">
-            </div>
+                <div class="form-group">
+                  <label for="telefono">Número de teléfono <span class="req">*</span></label>
+                  <input type="tel" id="telefono" name="telefono" required placeholder="+34 600 000 000">
+                </div>
+              </div>
 
-            <div class="form-group">
-              <label for="servicio">Servicio de interés <span class="req">*</span></label>
-              <textarea id="servicio" name="servicio" rows="4" placeholder="Describe el servicio de interés" required></textarea>
+              <div class="form-right-col">
+                <div class="form-group">
+                  <label for="servicio">Servicio de interés <span class="req">*</span></label>
+                  <textarea id="servicio" name="servicio" rows="4" placeholder="Describe el servicio de interés" required></textarea>
+                </div>
+              </div>
             </div>
 
             <button type="submit" class="submit-btn" disabled>Enviar</button>
@@ -87,12 +93,12 @@
             <h3>¡Gracias por contactarnos!</h3>
             <p>Nos pondremos en contacto contigo pronto.</p>
           </div>
-
-          <div class="contact-social-icons">
-            <a href="#" aria-label="Facebook"><img src="./icons/icons8-facebook-100.png" alt="Facebook"></a>
-            <a href="#" aria-label="Instagram"><img src="./icons/icons8-instagram-100.png" alt="Instagram"></a>
-            <a href="#" aria-label="WhatsApp"><img src="./icons/icons8-whatsapp-100.png" alt="WhatsApp"></a>
-          </div>
+        </div>
+        
+        <div class="contact-social-icons global-social-icons">
+          <a href="#" aria-label="Facebook"><img src="./icons/icons8-facebook-100.png" alt="Facebook"></a>
+          <a href="#" aria-label="Instagram"><img src="./icons/icons8-instagram-100.png" alt="Instagram"></a>
+          <a href="#" aria-label="WhatsApp"><img src="./icons/icons8-whatsapp-100.png" alt="WhatsApp"></a>
         </div>
       </div>
     </div>
